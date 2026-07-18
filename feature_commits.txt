@@ -36,3 +36,4 @@ feat: build amenities calendar UI
 feat: add emergency alarm feature for guards
 feat: create service staff work order API
 feat: build service staff dashboard
+feat: implement resident profile editing
