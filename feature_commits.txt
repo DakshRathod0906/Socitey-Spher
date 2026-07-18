@@ -25,3 +25,4 @@ feat: build admin complaints resolution UI
 feat: setup email service for notifications
 feat: implement billing and maintenance fee API
 feat: create My Bills page for residents
+feat: integrate payment gateway mock
