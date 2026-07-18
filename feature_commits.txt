@@ -14,3 +14,4 @@ feat: implement visitor pre-approval logic
 feat: create My Visitors UI for residents
 feat: generate QR code for visitor passes
 feat: build security guard dashboard
+feat: implement QR scanner for guards
