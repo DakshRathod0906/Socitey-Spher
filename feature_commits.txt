@@ -33,3 +33,4 @@ feat: create digital noticeboard for residents
 feat: add admin notice creation form
 feat: implement amenities booking logic
 feat: build amenities calendar UI
+feat: add emergency alarm feature for guards
