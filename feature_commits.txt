@@ -34,3 +34,4 @@ feat: add admin notice creation form
 feat: implement amenities booking logic
 feat: build amenities calendar UI
 feat: add emergency alarm feature for guards
+feat: create service staff work order API
