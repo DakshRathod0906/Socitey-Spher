@@ -1,0 +1,1 @@
+feat: initialize frontend React app
