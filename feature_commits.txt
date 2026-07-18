@@ -8,3 +8,4 @@ feat: setup React Query for data fetching
 feat: create Sidebar navigation component
 feat: implement Society registration flow
 feat: add admin dashboard layout
+feat: build resident directory page
