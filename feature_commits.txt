@@ -1,1 +1,2 @@
 feat: initialize frontend React app
+feat: setup backend Express server
