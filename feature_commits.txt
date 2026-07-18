@@ -1,3 +1,4 @@
 feat: initialize frontend React app
 feat: setup backend Express server
 feat: add MongoDB connection logic
+feat: implement user authentication API
