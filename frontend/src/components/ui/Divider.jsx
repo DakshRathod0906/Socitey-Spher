@@ -1,0 +1,14 @@
+import { cn } from "../../lib/utils";
+
+export default function Divider({ className, label }) {
+  if (label) {
+    return (
+      <div className={cn("flex items-center gap-3", className)}>
+        <div className="flex-1 border-t border-border" />
+        <span className="text-xs text-muted font-medium">{label}</span>
+        <div className="flex-1 border-t border-border" />
+      </div>
+    );
+  }
+  return <div className={cn("border-t border-border", className)} />;
+}
