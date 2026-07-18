@@ -12,3 +12,4 @@ feat: build resident directory page
 feat: add API for fetching residents
 feat: implement visitor pre-approval logic
 feat: create My Visitors UI for residents
+feat: generate QR code for visitor passes
