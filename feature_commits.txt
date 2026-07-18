@@ -31,3 +31,4 @@ feat: build vehicle management UI
 feat: implement society notices API
 feat: create digital noticeboard for residents
 feat: add admin notice creation form
+feat: implement amenities booking logic
