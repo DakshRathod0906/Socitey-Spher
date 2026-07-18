@@ -16,3 +16,4 @@ feat: generate QR code for visitor passes
 feat: build security guard dashboard
 feat: implement QR scanner for guards
 feat: add walk-in visitor request flow
+feat: setup real-time notifications
