@@ -28,3 +28,4 @@ feat: create My Bills page for residents
 feat: integrate payment gateway mock
 feat: add parking spot allocation logic
 feat: build vehicle management UI
+feat: implement society notices API
