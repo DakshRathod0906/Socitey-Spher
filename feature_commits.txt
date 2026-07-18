@@ -29,3 +29,4 @@ feat: integrate payment gateway mock
 feat: add parking spot allocation logic
 feat: build vehicle management UI
 feat: implement society notices API
+feat: create digital noticeboard for residents
