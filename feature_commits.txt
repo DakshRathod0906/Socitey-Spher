@@ -23,3 +23,4 @@ feat: add complaints management API
 feat: create resident complaints page
 feat: build admin complaints resolution UI
 feat: setup email service for notifications
+feat: implement billing and maintenance fee API
