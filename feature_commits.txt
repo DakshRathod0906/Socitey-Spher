@@ -20,3 +20,4 @@ feat: setup real-time notifications
 feat: notify resident on visitor arrival
 feat: implement visitor checkout logic
 feat: add complaints management API
+feat: create resident complaints page
