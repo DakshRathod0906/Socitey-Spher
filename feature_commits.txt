@@ -4,3 +4,4 @@ feat: add MongoDB connection logic
 feat: implement user authentication API
 feat: create user login UI
 feat: add JWT token validation middleware
+feat: setup React Query for data fetching
