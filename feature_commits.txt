@@ -9,3 +9,4 @@ feat: create Sidebar navigation component
 feat: implement Society registration flow
 feat: add admin dashboard layout
 feat: build resident directory page
+feat: add API for fetching residents
