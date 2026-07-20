@@ -19,6 +19,7 @@ const AcceptInvitation = lazy(() => import("./features/auth/AcceptInvitation"));
 // Super Admin
 const SuperAdminDashboard = lazy(() => import("./features/super-admin/SuperAdminDashboard"));
 const SocietyDetails = lazy(() => import("./features/super-admin/SocietyDetails"));
+const SocietyAdmins = lazy(() => import("./features/super-admin/SocietyAdmins"));
 
 // Admin
 const AdminDashboard = lazy(() => import("./features/dashboard/AdminDashboard"));
@@ -79,7 +80,9 @@ function App() {
           {/* Super Admin */}
           <Route path="/super-admin">
             <Route index element={<ProtectedRoute allowedRoles={["super_admin"]}><SuperAdminDashboard /></ProtectedRoute>} />
+            <Route path="societies" element={<ProtectedRoute allowedRoles={["super_admin"]}><SuperAdminDashboard /></ProtectedRoute>} />
             <Route path="societies/:id" element={<ProtectedRoute allowedRoles={["super_admin"]}><SocietyDetails /></ProtectedRoute>} />
+            <Route path="admins" element={<ProtectedRoute allowedRoles={["super_admin"]}><SocietyAdmins /></ProtectedRoute>} />
           </Route>
 
           {/* Society Admin */}

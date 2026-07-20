@@ -1,25 +1,84 @@
 import { useState } from "react";
-import { MessageSquare, MoreVertical, Edit } from "lucide-react";
-import { toast } from "sonner";
+import { MessageSquare, MoreVertical, CheckCircle, Clock } from "lucide-react";
 import { PageHeader, DataTable, FilterBar } from "../../components/shared";
-import { Badge, Dropdown, Modal, Select } from "../../components/ui";
+import { Badge, Dropdown, Modal, Select, Button, Input } from "../../components/ui";
+import { useComplaints, useAssignWorkOrder, useApproveReopen, useRejectReopen, useRejectComplaint, useCancelWorkOrder } from "./hooks/useComplaints";
+import { useQuery } from "@tanstack/react-query";
+import api from "../../services/api";
 
-const MOCK_COMPLAINTS = [
-  { id: 1, title: "Water leakage in master bathroom", category: "Plumbing", flat: "A-101", date: "Today, 10:00 AM", status: "Open", assignedTo: "Ramesh" },
-  { id: 2, title: "Corridor light not working", category: "Electrical", flat: "B-205", date: "Yesterday", status: "In Progress", assignedTo: "Suresh" },
-  { id: 3, title: "Lobby AC making noise", category: "Appliance", flat: "Common Area", date: "12 Oct 2023", status: "Resolved", assignedTo: "Suresh" },
-  { id: 4, title: "Garbage not collected", category: "Housekeeping", flat: "C-401", date: "10 Oct 2023", status: "Resolved", assignedTo: "Mahesh" },
-];
+// Custom hook for fetching staff
+const useStaff = () => {
+  return useQuery({
+    queryKey: ["staff"],
+    queryFn: async () => {
+      const { data } = await api.get("/api/societies/staff");
+      // Filter for service staff only
+      return data.data.filter(s => s.role === "service_staff");
+    }
+  });
+};
 
 export default function Complaints() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
   
-  const filteredComplaints = MOCK_COMPLAINTS.filter(c => 
+  // Modals state
+  const [assignModalData, setAssignModalData] = useState(null);
+  const [rejectModalData, setRejectModalData] = useState(null);
+
+  // Queries
+  const { data, isLoading } = useComplaints({ status: statusFilter, category: categoryFilter });
+  const { data: staffList } = useStaff();
+
+  // Mutations
+  const assignMutation = useAssignWorkOrder();
+  const approveReopenMutation = useApproveReopen();
+  const rejectReopenMutation = useRejectReopen();
+  const rejectComplaintMutation = useRejectComplaint();
+  const cancelWorkOrderMutation = useCancelWorkOrder();
+
+  const complaints = data?.complaints || [];
+
+  // Local filtering for search query
+  const filteredComplaints = complaints.filter(c => 
     c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    c.flat.toLowerCase().includes(searchQuery.toLowerCase())
+    c.complaintNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.flatId?.flatNumber?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleAssignSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const assignedTo = formData.get("assignedTo");
+    
+    if (assignModalData && assignedTo) {
+      assignMutation.mutate(
+        { 
+          complaintId: assignModalData._id, 
+          assignedTo,
+          assignedDepartment: "General" 
+        },
+        {
+          onSuccess: () => setAssignModalData(null)
+        }
+      );
+    }
+  };
+
+  const handleRejectSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const reason = formData.get("reason");
+    
+    if (rejectModalData && reason) {
+      if (rejectModalData.status === "REOPEN_REQUESTED") {
+        rejectReopenMutation.mutate({ id: rejectModalData._id, reason }, { onSuccess: () => setRejectModalData(null) });
+      } else {
+        rejectComplaintMutation.mutate({ id: rejectModalData._id, reason }, { onSuccess: () => setRejectModalData(null) });
+      }
+    }
+  };
 
   const columns = [
     { 
@@ -28,41 +87,68 @@ export default function Complaints() {
       cell: (row) => (
         <div>
           <p className="font-medium text-text">{row.title}</p>
-          <p className="text-xs text-muted">{row.category} • {row.flat}</p>
+          <p className="text-xs text-muted">{row.complaintNumber} • Flat {row.flatId?.flatNumber || "N/A"}</p>
         </div>
       )
     },
-    { header: "Date Raised", accessor: "date" },
-    { header: "Assigned To", accessor: "assignedTo" },
+    { 
+      header: "Category", 
+      accessor: "category",
+      cell: (row) => <span className="text-sm text-text capitalize">{row.category.toLowerCase()}</span>
+    },
+    { 
+      header: "Date", 
+      accessor: "createdAt",
+      cell: (row) => new Date(row.createdAt).toLocaleDateString()
+    },
     { 
       header: "Status", 
       accessor: "status",
       cell: (row) => {
         const variants = {
-          "Resolved": "success",
-          "In Progress": "primary",
-          "Open": "danger"
+          "RESOLVED": "success",
+          "CLOSED": "success",
+          "IN_PROGRESS": "primary",
+          "ASSIGNED": "primary",
+          "OPEN": "warning",
+          "REOPEN_REQUESTED": "warning",
+          "CANCELLED": "danger",
+          "REJECTED": "danger"
         };
-        return <Badge variant={variants[row.status]}>{row.status}</Badge>;
+        return <Badge variant={variants[row.status] || "default"}>{row.status.replace("_", " ")}</Badge>;
       }
     },
     {
       header: "Actions",
       accessor: "actions",
       align: "right",
-      cell: (row) => (
-        <Dropdown 
-          align="right"
-          items={[
-            { label: "Update Status", icon: Edit, onClick: () => { setSelectedComplaint(row); setIsUpdateModalOpen(true); } },
-          ]}
-          trigger={
-            <button className="p-1.5 rounded-lg text-muted hover:bg-secondary-light hover:text-text transition-colors">
-              <MoreVertical size={16} />
-            </button>
-          }
-        />
-      )
+      cell: (row) => {
+        const actions = [];
+        
+        if (row.status === "OPEN") {
+          actions.push({ label: "Assign Staff", onClick: () => setAssignModalData(row) });
+          actions.push({ label: "Reject Ticket", onClick: () => setRejectModalData(row) });
+        }
+        
+        if (row.status === "REOPEN_REQUESTED") {
+          actions.push({ label: "Approve Reopen", onClick: () => approveReopenMutation.mutate(row._id) });
+          actions.push({ label: "Reject Reopen", onClick: () => setRejectModalData(row) });
+        }
+
+        if (actions.length === 0) return <span className="text-muted text-xs">No Actions</span>;
+
+        return (
+          <Dropdown 
+            align="right"
+            items={actions}
+            trigger={
+              <button className="p-1.5 rounded-lg text-muted hover:bg-secondary-light hover:text-text transition-colors">
+                <MoreVertical size={16} />
+              </button>
+            }
+          />
+        );
+      }
     }
   ];
 
@@ -79,78 +165,123 @@ export default function Complaints() {
             <MessageSquare className="h-6 w-6 text-danger" />
           </div>
           <div>
-            <p className="text-sm text-muted">Open Tickets</p>
-            <p className="text-2xl font-bold text-text">14</p>
+            <p className="text-sm text-muted">Open / Reopen Requests</p>
+            <p className="text-2xl font-bold text-text">
+              {complaints.filter(c => c.status === "OPEN" || c.status === "REOPEN_REQUESTED").length}
+            </p>
           </div>
         </div>
         <div className="bg-card p-4 rounded-xl border border-border flex items-center gap-4">
           <div className="h-12 w-12 rounded-lg bg-primary-light flex items-center justify-center">
-            <MessageSquare className="h-6 w-6 text-primary" />
+            <Clock className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <p className="text-sm text-muted">In Progress</p>
-            <p className="text-2xl font-bold text-text">8</p>
+            <p className="text-sm text-muted">Active Work Orders</p>
+            <p className="text-2xl font-bold text-text">
+              {complaints.filter(c => c.status === "ASSIGNED" || c.status === "IN_PROGRESS").length}
+            </p>
           </div>
         </div>
         <div className="bg-card p-4 rounded-xl border border-border flex items-center gap-4">
           <div className="h-12 w-12 rounded-lg bg-success-light flex items-center justify-center">
-            <MessageSquare className="h-6 w-6 text-success" />
+            <CheckCircle className="h-6 w-6 text-success" />
           </div>
           <div>
-            <p className="text-sm text-muted">Resolved (This Week)</p>
-            <p className="text-2xl font-bold text-text">45</p>
+            <p className="text-sm text-muted">Resolved / Closed</p>
+            <p className="text-2xl font-bold text-text">
+              {complaints.filter(c => c.status === "RESOLVED" || c.status === "CLOSED").length}
+            </p>
           </div>
         </div>
       </div>
 
       <FilterBar 
-        searchPlaceholder="Search tickets or flats..."
+        searchPlaceholder="Search ticket # or flat..."
         onSearch={setSearchQuery}
         filters={[
-          { label: "Category", options: [{ label: "Plumbing" }, { label: "Electrical" }, { label: "Housekeeping" }] },
-          { label: "Status", options: [{ label: "Open" }, { label: "In Progress" }, { label: "Resolved" }] }
+          { 
+            label: "Category", 
+            options: [
+              { label: "All", value: "" },
+              { label: "Plumbing", value: "PLUMBING" }, 
+              { label: "Electrical", value: "ELECTRICAL" },
+              { label: "Cleaning", value: "CLEANING" },
+              { label: "Other", value: "OTHER" }
+            ],
+            onChange: setCategoryFilter
+          },
+          { 
+            label: "Status", 
+            options: [
+              { label: "All", value: "" },
+              { label: "Open", value: "OPEN" },
+              { label: "Assigned", value: "ASSIGNED" },
+              { label: "In Progress", value: "IN_PROGRESS" },
+              { label: "Resolved", value: "RESOLVED" },
+              { label: "Reopen Requested", value: "REOPEN_REQUESTED" },
+            ],
+            onChange: setStatusFilter
+          }
         ]}
       />
 
-      <DataTable 
-        columns={columns}
-        data={filteredComplaints}
-        itemsPerPage={10}
-      />
+      {isLoading ? (
+        <div className="text-center py-12 text-muted">Loading complaints...</div>
+      ) : (
+        <DataTable 
+          columns={columns}
+          data={filteredComplaints}
+          itemsPerPage={10}
+        />
+      )}
 
+      {/* Assign Modal */}
       <Modal 
-        open={isUpdateModalOpen} 
-        onClose={() => setIsUpdateModalOpen(false)}
-        title="Update Ticket"
-        description={selectedComplaint ? `Ticket: ${selectedComplaint.title}` : ""}
-        footer={
-          <>
-            <Button variant="outline" onClick={() => setIsUpdateModalOpen(false)}>Cancel</Button>
-            <Button onClick={() => {
-              toast.success("Ticket updated successfully!");
-              setIsUpdateModalOpen(false);
-            }}>Save Changes</Button>
-          </>
-        }
+        open={!!assignModalData} 
+        onClose={() => setAssignModalData(null)}
+        title="Assign Work Order"
+        description={`Assign staff to ${assignModalData?.complaintNumber}`}
       >
-        <div className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-text">Status</label>
-            <Select defaultValue={selectedComplaint?.status}>
-              <option value="Open">Open</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Resolved">Resolved</option>
-            </Select>
-          </div>
+        <form onSubmit={handleAssignSubmit} className="space-y-4 pt-4">
           <div className="space-y-1">
             <label className="text-sm font-medium text-text">Assign To</label>
-            <Select defaultValue={selectedComplaint?.assignedTo}>
-              <option value="Ramesh">Ramesh (Plumber)</option>
-              <option value="Suresh">Suresh (Electrician)</option>
-              <option value="Mahesh">Mahesh (Housekeeping)</option>
+            <Select name="assignedTo" required>
+              <option value="">Select Staff...</option>
+              {staffList?.map(staff => (
+                <option key={staff._id} value={staff._id}>
+                  {staff.name} ({staff.serviceCategory || "General"})
+                </option>
+              ))}
             </Select>
           </div>
-        </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" type="button" onClick={() => setAssignModalData(null)}>Cancel</Button>
+            <Button type="submit" isLoading={assignMutation.isPending}>Assign Ticket</Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Reject Modal */}
+      <Modal 
+        open={!!rejectModalData} 
+        onClose={() => setRejectModalData(null)}
+        title={rejectModalData?.status === "REOPEN_REQUESTED" ? "Reject Reopen Request" : "Reject Complaint"}
+        description={`Provide a reason for rejecting ${rejectModalData?.complaintNumber}`}
+      >
+        <form onSubmit={handleRejectSubmit} className="space-y-4 pt-4">
+          <Input 
+            name="reason" 
+            label="Rejection Reason" 
+            placeholder="Please enter a reason..." 
+            required
+          />
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" type="button" onClick={() => setRejectModalData(null)}>Cancel</Button>
+            <Button type="submit" variant="danger" isLoading={rejectComplaintMutation.isPending || rejectReopenMutation.isPending}>
+              Reject Ticket
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );

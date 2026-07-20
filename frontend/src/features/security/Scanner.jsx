@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { QrReader } from "@yudiel/react-qr-scanner";
+import { Scanner as QrScanner } from "@yudiel/react-qr-scanner";
 import { Shield, Camera, Keyboard, X } from "lucide-react";
 import { Button, Input, Modal } from "../../components/ui";
 import { useVerifyVisit } from "./hooks/useSecurityVisits";
@@ -72,12 +72,9 @@ export default function Scanner() {
         {mode === "qr" ? (
           <div className="w-full max-w-sm aspect-square bg-black rounded-3xl overflow-hidden shadow-2xl relative border-4 border-surface">
             {!isPending ? (
-              <QrReader
-                onResult={(result, error) => {
-                  if (!!result) {
-                    handleDecode(result?.text);
-                  }
-                }}
+              <QrScanner
+                onResult={(text) => handleDecode(text)}
+                onError={(error) => console.error(error)}
                 constraints={{ facingMode: "environment" }}
                 videoStyle={{ objectFit: "cover" }}
               />
