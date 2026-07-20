@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { queryKeys } from "../../../services/queryKeys";
 import { cacheHelpers } from "../../../lib/cacheHelpers";
 import * as residentApi from "../api/resident.api";
+import * as userApi from "../api/user.api";
 
 /**
  * Standardized hook for listing residents with pagination and search.
@@ -86,9 +87,9 @@ export const useUpdateResident = (options = {}) => {
 export const useDeactivateResident = (options = {}) => {
   const { onSuccess, ...restOptions } = options;
   return useMutation({
-    mutationFn: residentApi.deactivateResident,
+    mutationFn: userApi.deactivateUser,
     onSuccess: (data, variables, context) => {
-      toast.success("Resident deactivated.");
+      toast.success("User deactivated successfully.");
       cacheHelpers.invalidateResidents();
       cacheHelpers.invalidateDashboard();
       if (onSuccess) onSuccess(data, variables, context);

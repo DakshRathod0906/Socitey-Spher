@@ -17,11 +17,12 @@ export const NAVIGATION_CONFIG = {
   super_admin: [
     { name: "Dashboard", href: "/super-admin", icon: LayoutDashboard },
     { name: "Societies", href: "/super-admin/societies", icon: Building },
+    { name: "Admins", href: "/super-admin/admins", icon: Users },
     { name: "Settings", href: "/super-admin/settings", icon: Settings },
   ],
   society_admin: [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { name: "Residents", href: "/admin/residents", icon: Users },
+    { name: "Users", href: "/admin/residents", icon: Users },
     { name: "Visitors", href: "/admin/visitors", icon: Shield },
     { name: "Complaints", href: "/admin/complaints", icon: MessageSquare },
     { name: "Billing", href: "/admin/billing", icon: CreditCard },
