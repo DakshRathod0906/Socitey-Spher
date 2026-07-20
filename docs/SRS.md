@@ -278,14 +278,17 @@ This chapter presents the high-level architecture of SocietySphere. It explains 
 - Support independent deployment of services.
 
 ### 3.3 High-Level System Architecture
-React Frontend <-> Express Backend <-> MongoDB / Email Service / ML Service
+SocietySphere uses a hybrid MERN + Python architecture.
+React Frontend <-> Express Backend <-> MongoDB
+MongoDB -> ETL Pipeline -> Python Analytics Service -> Dashboards
 
 ### 3.4 Layered Architecture
-SocietySphere follows a four-layer architecture:
-1. **Presentation Layer**: React UI, Dashboards, Forms
-2. **Business Logic Layer**: Controllers, Services, Validation
-3. **Data Access Layer**: Mongoose Models, Database Queries
-4. **Infrastructure Layer**: MongoDB, SMTP, ML Service
+SocietySphere follows a five-layer architecture:
+1. **Presentation Layer**: React UI, Operational Dashboards
+2. **Business Logic Layer**: Node/Express Controllers, Services, Validation
+3. **Data Access Layer**: Mongoose Models, MongoDB
+4. **Analytics Layer (Python)**: Pandas ETL, Scikit-Learn Models, Analytics API
+5. **Infrastructure Layer**: SMTP, ML Service, Cloud Storage
 
 ### 3.5 Multi-Tenant Architecture
 SocietySphere is built as a single application serving multiple societies. Every record stored in the database belongs to exactly one society. Each collection contains a mandatory field: `societyId`.
@@ -312,16 +315,16 @@ Authorization is based on: User Role, Society Membership.
 Client Request -> Route -> Authentication Middleware -> Authorization Middleware -> Input Validation -> Controller -> Service Layer -> Database -> Response
 
 ### 3.12 Module Dependency Diagram
-Authentication -> Society Management -> Resident Management -> Visitors / Complaints / Parking -> Service Management -> Maintenance Billing -> Reports
+Authentication -> Society Setup -> Resident Management -> Visitors / Complaints / Service Management -> Maintenance Billing -> Reports -> Python Analytics (FCSP-2)
 
 ### 3.13 External Services
 - SMTP Server (Email verification and notifications)
 - QR Library (Visitor QR generation)
-- Python ML API (Predictions)
+- Python ML API (Predictions & Analytics)
 - PDF Generator (Report export)
 
 ### 3.14 Deployment Architecture
-Internet -> React Frontend -> Express API Server -> MongoDB Database / Python ML Service
+Internet -> React Frontend -> Express API Server -> MongoDB Database -> Python ETL -> Python ML Service
 
 ### 3.15 Scalability Considerations
 The architecture supports future growth through:

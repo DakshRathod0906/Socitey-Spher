@@ -7,34 +7,78 @@ SocietySphere aims to provide a scalable multi-tenant residential society manage
 # Project Information
 
 - Project Name: SocietySphere
-- Version: 1.0
-- Current Development Phase: Initial MVP Scaffold
-- Last Updated: 2026-07-08
-- Overall Progress (%): 10%
+- Version: 2.0 (Project Constitution)
+- Current Development Phase: Sprint 7 – Complaint & Helpdesk Management
+- Last Updated: 2026-07-20
+- Overall Progress (%): 60-70%
+- Project Type: Integrated FSD-2 + FCSP-2 Academic Project
+- Architecture: MERN Operational Platform + Python Analytics Service
 
 ---
 
-# Technology Stack & Architecture
+# Technology Stack
 
-**Frontend**
-React + Vite + Tailwind
+## Operational Platform
 
-**Backend**
-Node.js
-Express.js
+Frontend
+- React
+- Vite
+- Tailwind CSS
 
-**Database**
+Backend
+- Node.js
+- Express.js
+
+Database
+- MongoDB
+- Mongoose
+
+Authentication
+- JWT
+
+---
+
+## Analytics Platform (Planned)
+
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Matplotlib
+- Joblib
+
+Communication
+
+Express REST API
+        │
+        ▼
+Python Analytics Service
+
+---
+
+# Hybrid Architecture
+
+React Frontend
+        │
+        ▼
+Express REST API
+        │
+        ▼
 MongoDB
-Mongoose
-
-**Authentication**
-JWT
-
-**Architecture**
-REST API
-
-**Deployment**
-Local → Docker (Future)
+        │
+        ├──────────────► Python Analytics Service
+        │                     │
+        ▼                     ▼
+Operational Data      ETL Pipeline
+                              │
+                              ▼
+                  Pandas Data Cleaning
+                              │
+                              ▼
+                    ML & Analytics
+                              │
+                              ▼
+                 Analytics Dashboard
 
 ---
 
@@ -103,34 +147,39 @@ Invite Residents
 
 ```text
 Authentication
-    │
-    ▼
-Society Management
-    │
-    ▼
-Society Setup
-    │
-    ▼
-Resident Management
-    │
- ┌──┴───────────┐
- ▼              ▼
-Visitors   Complaints
- │              │
- └──────┬───────┘
-        ▼
-Notifications
-
-Residents
- │
- ├──► Billing
- ├──► Parking
- └──► Amenities
-
-Everything
       │
       ▼
-Reports
+Platform Administration
+      │
+      ▼
+Society Setup
+      │
+      ▼
+Resident Management
+      │
+ ┌────┴───────────────┐
+ ▼                    ▼
+Visitors         Complaints
+ │                    │
+ └────────┬───────────┘
+          ▼
+   Service Management
+          │
+          ▼
+ Maintenance Billing
+          │
+     ┌────┴─────┐
+     ▼          ▼
+ Parking   Amenities
+          │
+          ▼
+ Notices
+          │
+          ▼
+ Reports
+          │
+          ▼
+ Python Analytics
 ```
 
 ---
@@ -250,49 +299,91 @@ All code is expected to satisfy the following quality bars:
 
 # Folder Standards
 
-**backend/**
 ```text
-config/
-controllers/
-middleware/
-models/
-routes/
-services/
-validators/
-utils/
-seeders/
-constants/
-```
+societysphere/
 
-**React (src/)**
-```text
-pages/
-components/
-layouts/
-hooks/
-services/
-context/
-routes/
-utils/
-assets/
+backend/
+frontend/
+python-analytics/
+    app/
+    models/
+    datasets/
+    notebooks/
+    services/
+    scripts/
+    reports/
 ```
 
 ---
 
 # Milestones & Progress
 
-Status Values: `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED`, `TESTING`, `COMPLETED`
+Sprint 1 – Authentication & Foundation         ✅ COMPLETED
+Sprint 2 – Platform Administration             ✅ COMPLETED
+Sprint 3 – Society Registration                ✅ COMPLETED
+Sprint 4 – Society Setup Wizard                ✅ COMPLETED
+Sprint 5 – Resident Management                 ✅ COMPLETED
+Sprint 6 – Visitor Management                  ✅ COMPLETED
+Sprint 7 – Complaint & Helpdesk                🚧 IN_PROGRESS
+Sprint 8 – Billing                             ⏳ PLANNED
+Sprint 9 – Parking                             ⏳ PLANNED
+Sprint 10 – Amenities & Notices                ⏳ PLANNED
+Sprint 11 – Reports                            ⏳ PLANNED
+Sprint 12 – Python Analytics Integration       ⏳ PLANNED
 
-- **Phase 1: Authentication** - `IN_PROGRESS`
-- **Phase 2: Society Setup** - `NOT_STARTED`
-- **Phase 3: Resident Management** - `NOT_STARTED`
-- **Phase 4: Visitor Management** - `NOT_STARTED`
-- **Phase 5: Complaint Management** - `NOT_STARTED`
-- **Phase 6: Billing** - `NOT_STARTED`
-- **Phase 7: Parking** - `NOT_STARTED`
-- **Phase 8: Amenities** - `NOT_STARTED`
-- **Phase 9: Reports** - `NOT_STARTED`
-- **Phase 10: Polish** - `NOT_STARTED`
+---
+
+# Python Analytics Rules
+
+- Python remains an independent service.
+- Express is the source of operational data.
+- Python never performs CRUD on operational collections.
+- Python consumes exported or API-provided data.
+- ML predictions are advisory only.
+- Operational workflows continue even if Python is unavailable.
+
+---
+
+# ETL Pipeline
+
+```text
+MongoDB
+      │
+      ▼
+Export / API
+      │
+      ▼
+Python ETL
+      │
+      ▼
+Data Cleaning
+      │
+      ▼
+EDA
+      │
+      ▼
+Machine Learning
+      │
+      ▼
+Predictions
+      │
+      ▼
+Analytics Dashboard
+```
+
+---
+
+# Environment Variables
+
+MONGO_URI
+JWT_SECRET
+VITE_API_URL
+
+ML_SERVICE_URL
+ML_SERVICE_TIMEOUT
+
+PYTHON_DATASET_PATH
+MODEL_PATH
 
 ---
 
@@ -304,24 +395,7 @@ Status Values: `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED`, `TESTING`, `COMPLETED`
 - `createdBy`
 - `updatedBy`
 - `societyId` (Tenant-scoped collections only)
-- *Optional/Future:* `isDeleted`, `deletedAt`
-
-**Platform Collections**
-- **Society**: Owner: Platform | Contains: Users, Towers, Amenities | Tenant Scoped: NO
-- **SuperAdmin**: Owner: Platform | Tenant Scoped: NO
-
-**Tenant Collections (Scoped by societyId)**
-- **User**: Owner: Society | Referenced By: Notifications | Tenant Scoped: YES
-- **Tower**: Owner: Society | Contains: Flats | Tenant Scoped: YES
-- **Flat**: Owner: Tower | Contains: Residents | Referenced By: Bills | Tenant Scoped: YES
-- **Resident**: Owner: Flat | Contains: Visitors, Vehicles, Complaints | Tenant Scoped: YES
-- **Visitor**: Owner: Resident | Tenant Scoped: YES
-- **Complaint**: Owner: Resident | Tenant Scoped: YES
-- **Bill**: Owner: Flat | Tenant Scoped: YES
-- **ParkingSlot**: Owner: Society | Referenced By: Resident | Tenant Scoped: YES
-- **Amenity**: Owner: Society | Contains: Bookings | Tenant Scoped: YES
-- **Booking**: Owner: Amenity | Referenced By: Resident | Tenant Scoped: YES
-- **Notice**: Owner: Society | Tenant Scoped: YES
+- *Optional/Future:* `isDeleted`, `deletedAt`, `isArchived`, `archivedAt`
 
 ---
 
@@ -340,37 +414,33 @@ Status Values: `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED`, `TESTING`, `COMPLETED`
 
 # API Status
 
-**Authentication (90%)**
+**Authentication (100%)**
 - [x] Register
 - [x] Login
-- [ ] Refresh
-- [ ] Forgot Password
-- [ ] Reset Password
+- [x] Create Staff User
 
-**Society Management**
-- [ ] Approve Society
-- [ ] Get Society Profile
+**Society Management (100%)**
+- [x] Approve Society
+- [x] Get Society Profile
 
-**Society Setup**
-- [ ] Create Tower
-- [ ] Generate Flats
+**Society Setup (100%)**
+- [x] Create Tower
+- [x] Generate Flats
 
-*(Other modules pending API tracking)*
+*(Other modules completed up to Sprint 6)*
 
 ---
 
 # Frontend
 
 **Completed Pages**
-- Register Society
-- Login
+- Register Society, Login
+- Admin Dashboard, Society Setup (Towers/Flats)
+- Residents List, Resident Invitations
+- Security Guard Dashboard, QR Scanner, Visitor History
 
 **Pending Pages**
-- Admin Dashboard
-- Society Setup (Towers/Flats)
-- Residents List
-- Visitor Log
-- Complaints
+- Complaints & Service Dashboard
 - Billing
 - Parking Allocation
 - Notice Board
@@ -381,7 +451,7 @@ Status Values: `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED`, `TESTING`, `COMPLETED`
 
 **Flow**
 1. User provides email and password.
-2. Backend verifies and returns JWT access and refresh tokens.
+2. Backend verifies and returns JWT access token.
 3. Frontend stores tokens and redirects based on role.
 
 **JWT Payload**
@@ -392,87 +462,19 @@ Status Values: `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED`, `TESTING`, `COMPLETED`
 
 ---
 
-# Version History
-
-**v0.1**
-- Initial project scaffolding (Express + Vite/React)
-- Basic Authentication and Society Registration scaffold
-- Created `docs/API.md` for API contract
-- Created `README.md` for setup instructions
-- Generated `brain.md` project memory file
-
----
-
-# Pending Tasks
-
-**High Priority**
-- Seed a Super Admin manually and demo the approval workflow
-- Build UI and API for Society Setup (Towers and Flats)
-
-**Medium Priority**
-- Complete remaining Auth features (Refresh token, password reset)
-- Resident invitation and activation flow
-
-**Low Priority**
-- Notification system
-
----
-
-# Known Issues
-
-- Need real file upload for work-order completion photos (currently a placeholder string).
-- Excluded from V1.0 MVP: ML services, Payment Gateway, Mobile Apps, SMS/WhatsApp, 2FA, Redis, WebSockets, CI/CD, Audit Logs, S3.
-
----
-
-# Decisions
-
-- Multi-tenancy isolation at the database level (`societyId`).
-- JWT-based Auth with RBAC middleware.
-- Focus exclusively on MVP "Must Haves" for the initial 2-4 week sprint.
-
----
-
-# Environment Variables
-
-- `MONGO_URI`
-- `JWT_SECRET`
-- `VITE_API_URL`
-
----
-
 # Next Recommended Task
 
-**Next Task:** 
-Implement Super Admin creation and basic Society Setup Flow
+**Next Task**
+Sprint 7 – Complaint & Helpdesk Management
 
-**Goal**
-Seed a Super Admin manually and create the essential views to add Towers and Flats for a registered society, fulfilling Phase 2 requirements.
+**Goals**
+- Complaint lifecycle
+- Work Order management
+- Staff assignment
+- Complaint timeline
+- Resident feedback
 
-**Files to modify**
-- `backend/models/Tower.js`
-- `backend/models/Flat.js`
-- `backend/routes/towerRoutes.js`
-- `backend/controllers/towerController.js`
-- `frontend/src/pages/SocietySetup.jsx`
-
-**Expected output**
-A logged-in Society Admin can navigate to a "Society Setup" page and successfully create Towers and generate Flats.
-
-**Dependencies**
-- MongoDB connection
-- Auth module (already scaffolded)
-
-**Acceptance criteria**
-- [ ] Models
-- [ ] Validation
-- [ ] Controllers
-- [ ] Routes
-- [ ] Services
-- [ ] RBAC
-- [ ] Tenant Isolation
-- [ ] API Tests
-- [ ] Frontend Pages
-- [ ] Manual Testing
-- [ ] Documentation Updated
-- [ ] `brain.md` Updated
+**After Sprint 7**
+- Integrate Python prediction service
+- Train complaint classification model
+- Build analytics dashboard
