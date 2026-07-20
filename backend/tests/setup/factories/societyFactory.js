@@ -22,6 +22,8 @@ export const createTower = async (societyId, overrides = {}) => {
     societyId,
     name: "Tower A",
     totalFloors: 10,
+    floorsCount: 10,
+    flatsPerFloor: 4,
     ...overrides
   });
 };

@@ -1,112 +1,178 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  getComplaints,
+  getComplaint,
+  createComplaint,
+  cancelComplaint,
+  rejectComplaint,
+  requestReopen,
+  approveReopen,
+  rejectReopen,
+  closeComplaint,
+  assignWorkOrder,
+  getActiveWorkOrders,
+  startWorkOrder,
+  resolveWorkOrder,
+  cancelWorkOrder,
+} from "../api/complaintApi";
 import { toast } from "sonner";
-import { queryKeys } from "../../../services/queryKeys.js";
-import { 
-  fetchComplaints, 
-  fetchComplaint, 
-  createComplaint, 
-  assignComplaint, 
-  submitFeedback,
-  uploadAttachment
-} from "./complaint.api.js";
-import { cacheHelpers } from "../../../lib/cacheHelpers.js";
 
-/**
- * Hook to fetch complaints
- */
-export function useComplaints(filters = {}) {
+// Queries
+export const useComplaints = (filters) => {
   return useQuery({
-    queryKey: [...queryKeys.complaints, filters],
-    queryFn: () => fetchComplaints(filters),
-    staleTime: 5 * 60 * 1000,
+    queryKey: ["complaints", filters],
+    queryFn: () => getComplaints(filters),
   });
-}
+};
 
-/**
- * Hook to fetch a single complaint
- */
-export function useComplaint(id) {
+export const useComplaint = (id) => {
   return useQuery({
-    queryKey: queryKeys.complaint(id),
-    queryFn: () => fetchComplaint(id),
+    queryKey: ["complaints", id],
+    queryFn: () => getComplaint(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000,
   });
-}
+};
 
-/**
- * Hook to create a complaint
- */
-export function useCreateComplaint() {
+export const useActiveWorkOrders = () => {
+  return useQuery({
+    queryKey: ["workOrders", "active"],
+    queryFn: getActiveWorkOrders,
+  });
+};
+
+// Mutations
+export const useCreateComplaint = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: createComplaint,
     onSuccess: () => {
-      toast.success("Complaint submitted successfully");
-      cacheHelpers.invalidate(queryClient, queryKeys.complaints);
-      cacheHelpers.invalidate(queryClient, queryKeys.dashboard);
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      toast.success("Complaint created successfully");
     },
-    onError: (error) => {
-      toast.error(error.message || "Failed to submit complaint");
-    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to create complaint"),
   });
-}
+};
 
-/**
- * Hook to assign a complaint to staff
- */
-export function useAssignComplaint() {
+export const useCancelComplaint = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: assignComplaint,
-    onSuccess: (data, variables) => {
-      toast.success("Complaint assigned successfully");
-      cacheHelpers.invalidate(queryClient, queryKeys.complaints);
-      cacheHelpers.invalidate(queryClient, queryKeys.complaint(variables.id));
-      cacheHelpers.invalidate(queryClient, queryKeys.serviceOrders);
-      cacheHelpers.invalidate(queryClient, queryKeys.dashboard);
+    mutationFn: cancelComplaint,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      toast.success(`Complaint ${data.complaintNumber} cancelled`);
     },
-    onError: (error) => {
-      toast.error(error.message || "Failed to assign complaint");
-    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to cancel complaint"),
   });
-}
+};
 
-/**
- * Hook to submit feedback
- */
-export function useSubmitFeedback() {
+export const useRejectComplaint = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: submitFeedback,
-    onSuccess: (data, variables) => {
-      toast.success("Feedback submitted successfully");
-      cacheHelpers.invalidate(queryClient, queryKeys.complaints);
-      cacheHelpers.invalidate(queryClient, queryKeys.complaint(variables.id));
+    mutationFn: ({ id, reason }) => rejectComplaint(id, reason),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      toast.success(`Complaint ${data.complaintNumber} rejected`);
     },
-    onError: (error) => {
-      toast.error(error.message || "Failed to submit feedback");
-    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to reject complaint"),
   });
-}
+};
 
-/**
- * Hook to upload attachment
- */
-export function useUploadComplaintAttachment() {
+export const useRequestReopen = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: uploadAttachment,
-    onSuccess: (data, variables) => {
-      toast.success("Attachment uploaded successfully");
-      cacheHelpers.invalidate(queryClient, queryKeys.complaint(variables.id));
+    mutationFn: ({ id, reason }) => requestReopen(id, reason),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      toast.success(`Requested reopen for ${data.complaintNumber}`);
     },
-    onError: (error) => {
-      toast.error(error.message || "Failed to upload attachment");
-    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to request reopen"),
   });
-}
+};
+
+export const useApproveReopen = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: approveReopen,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      toast.success(`Reopen approved for ${data.complaintNumber}`);
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to approve reopen"),
+  });
+};
+
+export const useRejectReopen = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reason }) => rejectReopen(id, reason),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      toast.success(`Reopen rejected for ${data.complaintNumber}`);
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to reject reopen"),
+  });
+};
+
+export const useCloseComplaint = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, rating, feedback }) => closeComplaint(id, { rating, feedback }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      toast.success(`Complaint ${data.complaintNumber} closed`);
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to close complaint"),
+  });
+};
+
+export const useAssignWorkOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: assignWorkOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      queryClient.invalidateQueries({ queryKey: ["workOrders"] });
+      toast.success("Work order assigned");
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to assign work order"),
+  });
+};
+
+export const useStartWorkOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: startWorkOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      queryClient.invalidateQueries({ queryKey: ["workOrders"] });
+      toast.success("Work started");
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to start work"),
+  });
+};
+
+export const useResolveWorkOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, formData }) => resolveWorkOrder(id, formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      queryClient.invalidateQueries({ queryKey: ["workOrders"] });
+      toast.success("Work order resolved");
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to resolve work order"),
+  });
+};
+
+export const useCancelWorkOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reason }) => cancelWorkOrder(id, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      queryClient.invalidateQueries({ queryKey: ["workOrders"] });
+      toast.success("Work order cancelled");
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to cancel work order"),
+  });
+};

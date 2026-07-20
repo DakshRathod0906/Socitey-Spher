@@ -4,6 +4,7 @@ import User from "../../models/User.js";
 import jwt from "jsonwebtoken";
 import * as invitationService from "../resident/InvitationService.js";
 import * as residentService from "../resident/ResidentService.js";
+import { sendEmail } from "../../utils/emailService.js";
 
 // Helper to generate tokens
 const generateTokens = (user) => {
@@ -55,12 +56,18 @@ export const registerAdmin = async (data) => {
     canLogin: true,
   });
 
-  // MOCK SMTP EMAIL SEND
-  console.log(`\n\n==========================================`);
-  console.log(`[MOCK EMAIL] Verification Email Sent to: ${email}`);
-  console.log(`[MOCK EMAIL] Click the link below to verify your account:`);
-  console.log(`http://localhost:5173/verify-email?token=${verificationToken}`);
-  console.log(`==========================================\n\n`);
+  const verificationUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}`;
+
+  await sendEmail({
+    to: email,
+    subject: "Verify your SocietySphere Admin Account",
+    text: `Click the link below to verify your account:\n${verificationUrl}`,
+    html: `
+      <h2>Welcome to SocietySphere!</h2>
+      <p>Please click the link below to verify your admin account:</p>
+      <a href="${verificationUrl}">${verificationUrl}</a>
+    `
+  });
 
   return {
     message: "Admin registered successfully. Please check your email to verify your account.",

@@ -1,5 +1,6 @@
 import * as invitationService from "../services/resident/InvitationService.js";
 import * as residentService from "../services/resident/ResidentService.js";
+import { sendEmail } from "../utils/emailService.js";
 
 // @desc   Invite a resident (or staff)
 // @route  POST /api/residents/invite
@@ -11,11 +12,18 @@ export const inviteResident = async (req, res, next) => {
       req.user._id
     );
 
-    // Mock sending email
-    console.log(`\n==========================================`);
-    console.log(`[MOCK EMAIL] Invitation sent to: ${invitation.email}`);
-    console.log(`[MOCK EMAIL] Join Link: http://localhost:5173/accept-invite?token=${rawToken}`);
-    console.log(`==========================================\n`);
+    const joinUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/accept-invite?token=${rawToken}`;
+
+    await sendEmail({
+      to: invitation.email,
+      subject: `Invitation to join SocietySphere`,
+      text: `You have been invited to join SocietySphere. Click the link below to accept the invitation:\n${joinUrl}`,
+      html: `
+        <h2>Welcome to SocietySphere!</h2>
+        <p>You have been invited to join the society platform. Please click the link below to accept your invitation:</p>
+        <a href="${joinUrl}">${joinUrl}</a>
+      `
+    });
 
     res.status(201).json({ message: "Invitation sent successfully" });
   } catch (err) {
