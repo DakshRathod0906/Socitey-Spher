@@ -40,6 +40,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["electrician", "plumber", "carpenter", "gardener", "housekeeping", "lift_technician", "other"],
     },
+    deletedAt: { type: Date },
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

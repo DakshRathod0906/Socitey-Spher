@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 import { checkHealth as checkMLHealth } from "./services/ai/aiProvider.js";
 import { initSocietyEventHandlers } from "./events/handlers/societyEventHandler.js";
+import { initComplaintEvents } from "./services/events/ComplaintEvents.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import societyRoutes from "./routes/societyRoutes.js";
@@ -15,7 +16,8 @@ import invitationRoutes from "./routes/invitationRoutes.js";
 import vehicleRoutes from "./routes/vehicleRoutes.js";
 import visitorRoutes from "./routes/visitorRoutes.js";
 import complaintRoutes from "./routes/complaintRoutes.js";
-import serviceRoutes from "./routes/serviceRoutes.js";
+import workOrderRoutes from "./routes/workOrderRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import billingRoutes from "./routes/billingRoutes.js";
 import parkingRoutes from "./routes/parkingRoutes.js";
 import noticeRoutes from "./routes/noticeRoutes.js";
@@ -30,6 +32,7 @@ dotenv.config();
 
 // Initialize Event Bus Handlers
 initSocietyEventHandlers();
+initComplaintEvents();
 
 const app = express();
 
@@ -58,9 +61,10 @@ app.use("/api/societies", societyRoutes);
 app.use("/api/residents", residentRoutes);
 app.use("/api/invitations", invitationRoutes);
 app.use("/api/vehicles", vehicleRoutes);
-app.use("/api/visits", visitorRoutes);
+app.use("/api/visitors", visitorRoutes);
 app.use("/api/complaints", complaintRoutes);
-app.use("/api/service-orders", serviceRoutes);
+app.use("/api/work-orders", workOrderRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/billing", billingRoutes);
 app.use("/api/parking", parkingRoutes);
 app.use("/api/notices", noticeRoutes);
