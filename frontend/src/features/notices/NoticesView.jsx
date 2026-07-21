@@ -1,14 +1,15 @@
-import { Bell, Calendar, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { Bell, Calendar, ChevronRight, Pin } from "lucide-react";
 import { PageHeader } from "../../components/shared";
-import { Card, Badge } from "../../components/ui";
-
-const MOCK_NOTICES = [
-  { id: 1, title: "Annual General Meeting 2024", date: "Today, 09:00 AM", content: "Dear Residents, the AGM for 2024 is scheduled for this Sunday at the clubhouse. Please find the agenda attached.", isNew: true },
-  { id: 2, title: "Water Supply Interruption", date: "Yesterday, 04:30 PM", content: "Due to overhead tank cleaning, water supply will be interrupted between 10 AM and 2 PM tomorrow. Kindly store adequate water.", isNew: true },
-  { id: 3, title: "Diwali Celebration Guidelines", date: "15 Oct 2023", content: "As Diwali approaches, we request all residents to burst crackers only in the designated open ground area behind Block C to ensure safety and minimize noise pollution near the towers.", isNew: false },
-];
+import { Card, Badge, Button } from "../../components/ui";
+import { useNotices } from "./hooks/useNotices";
+import ViewNoticeModal from "./components/ViewNoticeModal";
+import { format } from "date-fns";
 
 export default function NoticesView() {
+  const { data: notices = [], isLoading } = useNotices({ archived: false });
+  const [selectedNotice, setSelectedNotice] = useState(null);
+
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader 
@@ -17,40 +18,72 @@ export default function NoticesView() {
       />
 
       <div className="max-w-4xl mx-auto space-y-4">
-        {MOCK_NOTICES.map((notice) => (
-          <Card key={notice.id} className="p-0 overflow-hidden hover:border-primary/40 transition-colors cursor-pointer group">
-            <div className="p-5 flex gap-4">
-              <div className="shrink-0 mt-1">
-                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${notice.isNew ? 'bg-primary-light text-primary' : 'bg-secondary-light text-muted'}`}>
-                  <Bell className="h-5 w-5" />
-                </div>
-              </div>
-              
-              <div className="flex-1">
-                <div className="flex items-start justify-between mb-1">
-                  <h3 className={`text-lg font-semibold ${notice.isNew ? 'text-text' : 'text-muted'}`}>
-                    {notice.title}
-                  </h3>
-                  {notice.isNew && <Badge variant="primary" size="sm">New</Badge>}
-                </div>
-                
-                <div className="flex items-center text-xs text-muted mb-3">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {notice.date}
-                </div>
-                
-                <p className="text-sm text-text/80 leading-relaxed line-clamp-2">
-                  {notice.content}
-                </p>
-              </div>
-              
-              <div className="shrink-0 flex items-center justify-center pl-4 text-muted group-hover:text-primary transition-colors">
-                <ChevronRight className="h-5 w-5" />
-              </div>
+        {isLoading ? (
+          <div className="text-center py-8 text-muted animate-pulse">Loading notices...</div>
+        ) : notices.length === 0 ? (
+          <div className="text-center py-12 bg-surface border border-border/50 rounded-xl">
+            <div className="h-12 w-12 rounded-full bg-secondary text-muted flex items-center justify-center mx-auto mb-3">
+              <Bell className="h-6 w-6" />
             </div>
-          </Card>
-        ))}
+            <h3 className="text-lg font-medium text-text">No active notices</h3>
+            <p className="text-muted text-sm mt-1">You're all caught up!</p>
+          </div>
+        ) : (
+          notices.map((notice) => {
+            const isNew = new Date(notice.createdAt) > new Date(Date.now() - 3 * 24 * 60 * 60 * 1000); // Created in last 3 days
+            
+            return (
+              <Card 
+                key={notice._id} 
+                className={`p-0 overflow-hidden hover:border-primary/40 transition-colors cursor-pointer group ${notice.isPinned ? "border-primary/30 shadow-sm" : ""}`}
+                onClick={() => setSelectedNotice(notice)}
+              >
+                <div className="p-5 flex gap-4">
+                  <div className="shrink-0 mt-1">
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center ${notice.isPinned ? 'bg-primary-light text-primary' : isNew ? 'bg-secondary text-text' : 'bg-surface-light text-muted border border-border/50'}`}>
+                      {notice.isPinned ? <Pin className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-1 gap-2">
+                      <h3 className={`text-lg font-semibold truncate ${notice.isPinned || isNew ? 'text-text' : 'text-muted'}`}>
+                        {notice.title}
+                      </h3>
+                      <div className="shrink-0 flex gap-2">
+                        {notice.isPinned && <Badge variant="primary" size="sm">Pinned</Badge>}
+                        {isNew && !notice.isPinned && <Badge variant="success" size="sm">New</Badge>}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-muted mb-3">
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {format(new Date(notice.publishDate || notice.createdAt), "MMM d, yyyy h:mm a")}
+                      </div>
+                      <Badge variant="outline" size="sm">{notice.category}</Badge>
+                    </div>
+                    
+                    <p className="text-sm text-text/80 leading-relaxed line-clamp-2">
+                      {notice.content}
+                    </p>
+                  </div>
+                  
+                  <div className="shrink-0 flex items-center justify-center pl-4 text-muted group-hover:text-primary transition-colors">
+                    <ChevronRight className="h-5 w-5" />
+                  </div>
+                </div>
+              </Card>
+            );
+          })
+        )}
       </div>
+
+      <ViewNoticeModal
+        open={!!selectedNotice}
+        onClose={() => setSelectedNotice(null)}
+        notice={selectedNotice}
+      />
     </div>
   );
 }
