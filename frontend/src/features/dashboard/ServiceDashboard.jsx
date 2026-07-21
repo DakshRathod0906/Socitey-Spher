@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ClipboardList, Wrench as Tool, CheckCircle, Clock } from "lucide-react";
+import { ClipboardList, Wrench as Tool, CheckCircle, Clock, Download } from "lucide-react";
 import { PageHeader, StatCard } from "../../components/shared";
-import { Tabs } from "../../components/ui";
+import { Tabs, Button } from "../../components/ui";
 import { useActiveWorkOrders, useStartWorkOrder, useResolveWorkOrder } from "../workOrders/hooks/useWorkOrders";
+import { exportToCSV } from "../../lib/exportUtils";
 import WorkOrderCard from "../workOrders/components/WorkOrderCard";
 import ResolveWorkOrderModal from "../workOrders/components/ResolveWorkOrderModal";
 
@@ -79,6 +80,21 @@ export default function ServiceDashboard() {
       <PageHeader 
         title="Service Dashboard" 
         subtitle="Manage assigned work orders and complaints."
+        actions={
+          <Button variant="outline" onClick={() => {
+            const cols = [
+              { header: "Title", accessor: "title" },
+              { header: "Category", accessor: "category" },
+              { header: "Priority", accessor: "priority" },
+              { header: "Status", accessor: "status" },
+              { header: "Location", accessor: "location" }
+            ];
+            exportToCSV(workOrders, "WorkOrders", cols);
+          }} disabled={workOrders.length === 0}>
+            <Download size={16} className="mr-2" />
+            Export CSV
+          </Button>
+        }
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

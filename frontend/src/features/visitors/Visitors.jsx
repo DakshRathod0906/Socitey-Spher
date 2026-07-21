@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { Shield, MoreVertical, ExternalLink } from "lucide-react";
 import { PageHeader, DataTable, FilterBar } from "../../components/shared";
-import { Badge, Dropdown } from "../../components/ui";
+import { Badge, Dropdown, Button } from "../../components/ui";
 import { LoadingScreen } from "../../components/feedback";
 import { useVisits } from "./hooks/useVisits";
+import { exportToCSV } from "../../lib/exportUtils";
 
 export default function Visitors() {
   const [filters, setFilters] = useState({ page: 1, limit: 10, search: "" });
+  const [selectedRows, setSelectedRows] = useState([]);
   const { data: visits, meta, isLoading, isError } = useVisits(filters);
 
   const columns = [
     { header: "Visitor Name", accessor: "visitorName", cell: (row) => <span className="font-medium">{row.visitorName}</span> },
-    { header: "Visiting Flat", accessor: "flat", cell: (row) => row.flatNumber },
+    { header: "Visiting Flat", accessor: "flatNumber", cell: (row) => row.flatNumber },
     { header: "Type", accessor: "visitorType", cell: (row) => <span className="capitalize">{row.visitorType.toLowerCase()}</span> },
-    { header: "Expected", accessor: "expectedArrival", cell: (row) => new Date(row.expectedArrival).toLocaleString() },
-    { header: "Check In", accessor: "checkInTime", cell: (row) => row.checkInTime ? new Date(row.checkInTime).toLocaleTimeString() : "-" },
-    { header: "Check Out", accessor: "checkOutTime", cell: (row) => row.checkOutTime ? new Date(row.checkOutTime).toLocaleTimeString() : "-" },
+    { header: "Expected", accessor: "expectedArrival", cell: (row) => new Date(row.expectedArrival).toLocaleString(), exportAccessor: (row) => new Date(row.expectedArrival).toLocaleString() },
+    { header: "Check In", accessor: "checkInTime", cell: (row) => row.checkInTime ? new Date(row.checkInTime).toLocaleTimeString() : "-", exportAccessor: (row) => row.checkInTime ? new Date(row.checkInTime).toLocaleString() : "-" },
+    { header: "Check Out", accessor: "checkOutTime", cell: (row) => row.checkOutTime ? new Date(row.checkOutTime).toLocaleTimeString() : "-", exportAccessor: (row) => row.checkOutTime ? new Date(row.checkOutTime).toLocaleString() : "-" },
     { 
       header: "Status", 
       accessor: "status",
@@ -50,6 +52,14 @@ export default function Visitors() {
     }
   ];
 
+  const handleExport = () => {
+    const dataToExport = selectedRows.length > 0 
+      ? visits.filter(r => selectedRows.includes(r._id))
+      : visits;
+    
+    exportToCSV(dataToExport, "Visitor_Logs", columns.filter(c => c.accessor !== "actions"));
+  };
+
   if (isLoading) return <LoadingScreen message="Loading visitor logs..." />;
 
   if (isError) {
@@ -70,11 +80,20 @@ export default function Visitors() {
       <FilterBar 
         searchPlaceholder="Search visitors by name or flat..."
         onSearch={(val) => setFilters({ ...filters, search: val, page: 1 })}
+        actions={
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={!visits || visits.length === 0}>
+            <Download size={16} className="mr-2" />
+            {selectedRows.length > 0 ? `Export Selected (${selectedRows.length})` : "Export Filtered"}
+          </Button>
+        }
       />
 
       <DataTable 
         columns={columns}
         data={visits}
+        selectable={true}
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
         pagination={{
           currentPage: filters.page,
           totalPages: meta?.totalPages || 1,
