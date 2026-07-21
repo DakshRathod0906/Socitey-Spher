@@ -1,23 +1,28 @@
 import express from "express";
+import { protect, authorize } from "../middleware/auth.js";
+import { enforceTenant } from "../middleware/tenant.js";
 import {
   registerVehicle,
   listVehicles,
   createSlot,
-  listSlots,
   allocateSlot,
-  releaseSlot,
+  updateOccupancy,
+  listSlots
 } from "../controllers/parkingController.js";
-import { protect, authorize } from "../middleware/auth.js";
-import { enforceTenant } from "../middleware/tenant.js";
 
 const router = express.Router();
 
-router.post("/vehicles", protect, authorize("resident"), enforceTenant, registerVehicle);
-router.get("/vehicles", protect, enforceTenant, listVehicles);
+router.use(protect);
+router.use(enforceTenant);
 
-router.post("/slots", protect, authorize("society_admin"), enforceTenant, createSlot);
-router.get("/slots", protect, enforceTenant, listSlots);
-router.put("/slots/:id/allocate", protect, authorize("society_admin", "security"), enforceTenant, allocateSlot);
-router.put("/slots/:id/release", protect, authorize("society_admin", "security"), enforceTenant, releaseSlot);
+// Vehicles
+router.post("/vehicles", registerVehicle);
+router.get("/vehicles", listVehicles);
+
+// Parking Slots
+router.post("/slots", authorize("society_admin"), createSlot);
+router.get("/slots", listSlots);
+router.post("/slots/:id/allocate", authorize("society_admin"), allocateSlot);
+router.put("/slots/:id/occupancy", authorize("security_guard", "society_admin"), updateOccupancy);
 
 export default router;

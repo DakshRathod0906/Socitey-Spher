@@ -1,6 +1,6 @@
 import Visitor from "../models/Visitor.js";
 import Complaint from "../models/Complaint.js";
-import MaintenanceBill from "../models/MaintenanceBill.js";
+import Bill from "../models/Bill.js";
 import User from "../models/User.js";
 import Flat from "../models/Flat.js";
 import Notification from "../models/Notification.js";
@@ -20,7 +20,7 @@ export const adminDashboard = async (req, res, next) => {
         societyId,
         createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) },
       }),
-      MaintenanceBill.countDocuments({ societyId, status: { $in: ["unpaid", "overdue"] } }),
+      Bill.countDocuments({ societyId, status: { $in: ["PENDING", "PARTIAL", "OVERDUE"] } }),
     ]);
 
     // Complaint category breakdown (for trend/analytics charts)
@@ -30,11 +30,12 @@ export const adminDashboard = async (req, res, next) => {
     ]);
 
     // Monthly revenue trend (last 6 months of paid bills)
-    const revenueTrend = await MaintenanceBill.aggregate([
-      { $match: { societyId: req.user.societyId, status: "paid" } },
+    // Monthly revenue trend (last 6 months of paid bills)
+    const revenueTrend = await Bill.aggregate([
+      { $match: { societyId: req.user.societyId, status: "PAID" } },
       {
         $group: {
-          _id: { month: "$billMonth", year: "$billYear" },
+          _id: { month: { $month: "$billingCycle" }, year: { $year: "$billingCycle" } },
           total: { $sum: "$totalAmount" },
         },
       },
@@ -62,7 +63,7 @@ export const residentDashboard = async (req, res, next) => {
   try {
     const [myComplaints, myUnpaidBills, myVisitorsToday] = await Promise.all([
       Complaint.countDocuments({ residentId: req.user._id, status: { $ne: "closed" } }),
-      MaintenanceBill.countDocuments({ residentId: req.user._id, status: { $in: ["unpaid", "overdue"] } }),
+      Bill.countDocuments({ residentId: req.user._id, status: { $in: ["PENDING", "PARTIAL", "OVERDUE"] } }),
       Visitor.countDocuments({
         residentId: req.user._id,
         createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) },

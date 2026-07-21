@@ -8,6 +8,7 @@ const parkingSlotSchema = new mongoose.Schema(
     isOccupied: { type: Boolean, default: false },
     allocatedTo: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicle", default: null },
+    status: { type: String, enum: ["AVAILABLE", "ALLOCATED", "MAINTENANCE", "DISABLED"], default: "AVAILABLE" },
     occupiedAt: { type: Date, default: null },
   },
   { timestamps: true }
