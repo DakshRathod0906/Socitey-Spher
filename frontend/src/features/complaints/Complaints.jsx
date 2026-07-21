@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MessageSquare, MoreVertical, CheckCircle, Clock } from "lucide-react";
 import { PageHeader, DataTable, FilterBar } from "../../components/shared";
 import { Badge, Dropdown, Modal, Select, Button, Input } from "../../components/ui";
-import { useComplaints, useAssignWorkOrder, useApproveReopen, useRejectReopen, useRejectComplaint, useCancelWorkOrder } from "./hooks/useComplaints";
+import { useComplaints, useApproveReopen, useRejectReopen, useRejectComplaint } from "./hooks/useComplaints";
 import ViewFeedbackModal from "./components/ViewFeedbackModal";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";

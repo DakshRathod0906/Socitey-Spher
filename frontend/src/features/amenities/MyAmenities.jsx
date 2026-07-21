@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Coffee, Calendar as CalendarIcon, XCircle } from "lucide-react";
-import { PageHeader, Card } from "../../components/shared";
-import { Tabs } from "../../components/ui";
+import { PageHeader } from "../../components/shared";
+import { Tabs, Card } from "../../components/ui";
 import { useAmenities } from "./hooks/useAmenities";
 import AmenityCard from "./components/AmenityCard";
 import BookingModal from "./components/BookingModal";
