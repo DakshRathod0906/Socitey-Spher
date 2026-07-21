@@ -1,13 +1,21 @@
 import { useState } from "react";
 import { Plus, MessageSquare } from "lucide-react";
 import { PageHeader, DataTable } from "../../components/shared";
-import { Badge, Button, Modal, Input, Select, Textarea } from "../../components/ui";
-import { EmptyState } from "../../components/feedback";
-import { useComplaints, useCreateComplaint, useCancelComplaint } from "./hooks/useComplaints";
+import { Badge, Button, Modal as UIModal, Input, Select, Textarea } from "../../components/ui";
+import { useComplaints, useCreateComplaint, useCancelComplaint, useCloseComplaint, useRequestReopen } from "./hooks/useComplaints";
+
+import FeedbackModal from "./components/FeedbackModal";
+import ReopenModal from "./components/ReopenModal";
+import ViewFeedbackModal from "./components/ViewFeedbackModal";
 
 export default function MyComplaints() {
   const [isRaiseModalOpen, setIsRaiseModalOpen] = useState(false);
   
+  // Modals Data
+  const [feedbackModalData, setFeedbackModalData] = useState(null);
+  const [reopenModalData, setReopenModalData] = useState(null);
+  const [viewFeedbackModalData, setViewFeedbackModalData] = useState(null);
+
   // Form State
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -16,6 +24,26 @@ export default function MyComplaints() {
   const { data, isLoading } = useComplaints();
   const createMutation = useCreateComplaint();
   const cancelMutation = useCancelComplaint();
+  const closeMutation = useCloseComplaint();
+  const reopenMutation = useRequestReopen();
+
+  const handleFeedbackSubmit = (payload) => {
+    if (feedbackModalData) {
+      closeMutation.mutate(
+        { id: feedbackModalData._id, rating: payload.rating, feedback: payload.feedback },
+        { onSuccess: () => setFeedbackModalData(null) }
+      );
+    }
+  };
+
+  const handleReopenSubmit = (payload) => {
+    if (reopenModalData) {
+      reopenMutation.mutate(
+        { id: reopenModalData._id, reason: payload.reason },
+        { onSuccess: () => setReopenModalData(null) }
+      );
+    }
+  };
 
   const columns = [
     { 
@@ -54,7 +82,7 @@ export default function MyComplaints() {
       header: "Actions",
       accessor: "actions",
       cell: (row) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {row.status === "OPEN" && (
             <Button 
               variant="outline" 
@@ -69,7 +97,32 @@ export default function MyComplaints() {
               Cancel
             </Button>
           )}
-          {/* Note: In a real app we'd route to a detail page here to see history and leave feedback */}
+          {row.status === "RESOLVED" && (
+            <>
+              <Button 
+                size="sm" 
+                onClick={() => setFeedbackModalData(row)}
+              >
+                Provide Feedback
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setReopenModalData(row)}
+              >
+                Request Reopen
+              </Button>
+            </>
+          )}
+          {row.status === "CLOSED" && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setViewFeedbackModalData(row)}
+            >
+              View Feedback
+            </Button>
+          )}
         </div>
       )
     }
@@ -78,7 +131,6 @@ export default function MyComplaints() {
   const handleRaiseTicket = () => {
     if(!title || !description) return;
     
-    // In a real app we'd handle FormData for images, here we just pass json for now
     createMutation.mutate(
       { title, description, category },
       {
@@ -128,7 +180,7 @@ export default function MyComplaints() {
         />
       )}
 
-      <Modal 
+      <UIModal 
         open={isRaiseModalOpen} 
         onClose={() => setIsRaiseModalOpen(false)}
         title="Raise a Complaint"
@@ -166,7 +218,29 @@ export default function MyComplaints() {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-      </Modal>
+      </UIModal>
+
+      <FeedbackModal 
+        isOpen={!!feedbackModalData}
+        onClose={() => setFeedbackModalData(null)}
+        complaint={feedbackModalData}
+        onSubmit={handleFeedbackSubmit}
+        isSubmitting={closeMutation.isPending}
+      />
+
+      <ReopenModal 
+        isOpen={!!reopenModalData}
+        onClose={() => setReopenModalData(null)}
+        complaint={reopenModalData}
+        onSubmit={handleReopenSubmit}
+        isSubmitting={reopenMutation.isPending}
+      />
+
+      <ViewFeedbackModal 
+        isOpen={!!viewFeedbackModalData}
+        onClose={() => setViewFeedbackModalData(null)}
+        complaint={viewFeedbackModalData}
+      />
     </div>
   );
 }

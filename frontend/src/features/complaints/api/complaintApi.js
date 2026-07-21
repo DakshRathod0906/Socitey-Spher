@@ -47,30 +47,3 @@ export const closeComplaint = async (id, { rating, feedback }) => {
   return data.data;
 };
 
-// Work Orders
-export const assignWorkOrder = async ({ complaintId, assignedTo, assignedDepartment }) => {
-  const { data } = await api.post("/api/work-orders", { complaintId, assignedTo, assignedDepartment });
-  return data.data;
-};
-
-export const getActiveWorkOrders = async () => {
-  const { data } = await api.get("/api/work-orders/active");
-  return data.data;
-};
-
-export const startWorkOrder = async (id) => {
-  const { data } = await api.patch(`/api/work-orders/${id}/start`);
-  return data.data;
-};
-
-export const resolveWorkOrder = async (id, formData) => {
-  const { data } = await api.patch(`/api/work-orders/${id}/resolve`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return data.data;
-};
-
-export const cancelWorkOrder = async (id, reason) => {
-  const { data } = await api.patch(`/api/work-orders/${id}/cancel`, { reason });
-  return data.data;
-};

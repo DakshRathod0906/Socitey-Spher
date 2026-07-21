@@ -3,6 +3,7 @@ import { MessageSquare, MoreVertical, CheckCircle, Clock } from "lucide-react";
 import { PageHeader, DataTable, FilterBar } from "../../components/shared";
 import { Badge, Dropdown, Modal, Select, Button, Input } from "../../components/ui";
 import { useComplaints, useAssignWorkOrder, useApproveReopen, useRejectReopen, useRejectComplaint, useCancelWorkOrder } from "./hooks/useComplaints";
+import ViewFeedbackModal from "./components/ViewFeedbackModal";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
 
@@ -26,6 +27,7 @@ export default function Complaints() {
   // Modals state
   const [assignModalData, setAssignModalData] = useState(null);
   const [rejectModalData, setRejectModalData] = useState(null);
+  const [viewFeedbackModalData, setViewFeedbackModalData] = useState(null);
 
   // Queries
   const { data, isLoading } = useComplaints({ status: statusFilter, category: categoryFilter });
@@ -133,6 +135,10 @@ export default function Complaints() {
         if (row.status === "REOPEN_REQUESTED") {
           actions.push({ label: "Approve Reopen", onClick: () => approveReopenMutation.mutate(row._id) });
           actions.push({ label: "Reject Reopen", onClick: () => setRejectModalData(row) });
+        }
+        
+        if (row.status === "CLOSED" && (row.residentRating || row.residentFeedback)) {
+          actions.push({ label: "View Feedback", onClick: () => setViewFeedbackModalData(row) });
         }
 
         if (actions.length === 0) return <span className="text-muted text-xs">No Actions</span>;
@@ -283,6 +289,12 @@ export default function Complaints() {
           </div>
         </form>
       </Modal>
+
+      <ViewFeedbackModal 
+        isOpen={!!viewFeedbackModalData}
+        onClose={() => setViewFeedbackModalData(null)}
+        complaint={viewFeedbackModalData}
+      />
     </div>
   );
 }

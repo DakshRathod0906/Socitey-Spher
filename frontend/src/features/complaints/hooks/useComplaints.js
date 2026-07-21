@@ -9,11 +9,6 @@ import {
   approveReopen,
   rejectReopen,
   closeComplaint,
-  assignWorkOrder,
-  getActiveWorkOrders,
-  startWorkOrder,
-  resolveWorkOrder,
-  cancelWorkOrder,
 } from "../api/complaintApi";
 import { toast } from "sonner";
 
@@ -33,12 +28,7 @@ export const useComplaint = (id) => {
   });
 };
 
-export const useActiveWorkOrders = () => {
-  return useQuery({
-    queryKey: ["workOrders", "active"],
-    queryFn: getActiveWorkOrders,
-  });
-};
+
 
 // Mutations
 export const useCreateComplaint = () => {
@@ -125,54 +115,3 @@ export const useCloseComplaint = () => {
   });
 };
 
-export const useAssignWorkOrder = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: assignWorkOrder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["complaints"] });
-      queryClient.invalidateQueries({ queryKey: ["workOrders"] });
-      toast.success("Work order assigned");
-    },
-    onError: (err) => toast.error(err.response?.data?.message || "Failed to assign work order"),
-  });
-};
-
-export const useStartWorkOrder = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: startWorkOrder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["complaints"] });
-      queryClient.invalidateQueries({ queryKey: ["workOrders"] });
-      toast.success("Work started");
-    },
-    onError: (err) => toast.error(err.response?.data?.message || "Failed to start work"),
-  });
-};
-
-export const useResolveWorkOrder = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, formData }) => resolveWorkOrder(id, formData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["complaints"] });
-      queryClient.invalidateQueries({ queryKey: ["workOrders"] });
-      toast.success("Work order resolved");
-    },
-    onError: (err) => toast.error(err.response?.data?.message || "Failed to resolve work order"),
-  });
-};
-
-export const useCancelWorkOrder = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, reason }) => cancelWorkOrder(id, reason),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["complaints"] });
-      queryClient.invalidateQueries({ queryKey: ["workOrders"] });
-      toast.success("Work order cancelled");
-    },
-    onError: (err) => toast.error(err.response?.data?.message || "Failed to cancel work order"),
-  });
-};
