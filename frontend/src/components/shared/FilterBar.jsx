@@ -7,6 +7,7 @@ export default function FilterBar({
   searchPlaceholder = "Search...",
   filters = [],
   actionButton,
+  actions,
   className,
 }) {
   return (

@@ -15,6 +15,9 @@ export default function DataTable({
   pagination = true,
   itemsPerPage = 10,
   onRowClick,
+  selectable = false,
+  selectedRows = [],
+  onSelectionChange,
   className,
 }) {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
@@ -44,6 +47,34 @@ export default function DataTable({
     ? sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     : sortedData;
 
+  const handleSelectAll = (e) => {
+    if (!onSelectionChange) return;
+    if (e.target.checked) {
+      const newSelected = new Set(selectedRows);
+      paginatedData.forEach(row => newSelected.add(row.id || row._id));
+      onSelectionChange(Array.from(newSelected));
+    } else {
+      const newSelected = new Set(selectedRows);
+      paginatedData.forEach(row => newSelected.delete(row.id || row._id));
+      onSelectionChange(Array.from(newSelected));
+    }
+  };
+
+  const handleSelectRow = (e, rowId) => {
+    e.stopPropagation();
+    if (!onSelectionChange) return;
+    const newSelected = new Set(selectedRows);
+    if (e.target.checked) {
+      newSelected.add(rowId);
+    } else {
+      newSelected.delete(rowId);
+    }
+    onSelectionChange(Array.from(newSelected));
+  };
+
+  const isAllSelected = paginatedData.length > 0 && paginatedData.every(row => selectedRows.includes(row.id || row._id));
+  const isSomeSelected = paginatedData.some(row => selectedRows.includes(row.id || row._id));
+
   if (isLoading) {
     return (
       <div className={cn("bg-card rounded-xl border border-border overflow-hidden", className)}>
@@ -71,6 +102,17 @@ export default function DataTable({
         <table className="w-full text-sm text-left">
           <thead className="text-xs text-muted bg-secondary-light/50 border-b border-border uppercase">
             <tr>
+              {selectable && (
+                <th className="px-6 py-4 w-12 text-center">
+                  <input 
+                    type="checkbox" 
+                    className="rounded border-border text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                    checked={isAllSelected}
+                    ref={input => { if (input) input.indeterminate = isSomeSelected && !isAllSelected; }}
+                    onChange={handleSelectAll}
+                  />
+                </th>
+              )}
               {columns.map((col, idx) => (
                 <th
                   key={idx}
@@ -97,13 +139,24 @@ export default function DataTable({
           <tbody className="divide-y divide-border">
             {paginatedData.map((row, rowIndex) => (
               <tr
-                key={row.id || rowIndex}
+                key={row.id || row._id || rowIndex}
                 className={cn(
                   "hover:bg-secondary-light/30 transition-colors",
-                  onRowClick && "cursor-pointer"
+                  onRowClick && "cursor-pointer",
+                  selectedRows.includes(row.id || row._id) && "bg-primary-light/10"
                 )}
                 onClick={() => onRowClick?.(row)}
               >
+                {selectable && (
+                  <td className="px-6 py-4 whitespace-nowrap text-center" onClick={(e) => e.stopPropagation()}>
+                    <input 
+                      type="checkbox" 
+                      className="rounded border-border text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                      checked={selectedRows.includes(row.id || row._id)}
+                      onChange={(e) => handleSelectRow(e, row.id || row._id)}
+                    />
+                  </td>
+                )}
                 {columns.map((col, colIndex) => (
                   <td
                     key={colIndex}
