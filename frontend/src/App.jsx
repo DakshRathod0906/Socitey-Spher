@@ -32,6 +32,8 @@ const Complaints = lazy(() => import("./features/complaints/Complaints"));
 const Billing = lazy(() => import("./features/billing/Billing"));
 const Parking = lazy(() => import("./features/parking/Parking"));
 const Notices = lazy(() => import("./features/notices/Notices"));
+const AdminAmenities = lazy(() => import("./features/amenities/AdminAmenities"));
+const Expenses = lazy(() => import("./features/expenses/Expenses"));
 
 // Resident
 const ResidentDashboard = lazy(() => import("./features/dashboard/ResidentDashboard"));
@@ -41,6 +43,7 @@ const MyComplaints = lazy(() => import("./features/complaints/MyComplaints"));
 const MyBills = lazy(() => import("./features/billing/MyBills"));
 const MyParking = lazy(() => import("./features/parking/MyParking"));
 const NoticesView = lazy(() => import("./features/notices/NoticesView"));
+const MyAmenities = lazy(() => import("./features/amenities/MyAmenities"));
 
 // Security & Service
 const SecurityDashboard = lazy(() => import("./features/security/SecurityDashboard"));
@@ -95,8 +98,10 @@ function App() {
             <Route path="visitors" element={<ProtectedRoute allowedRoles={["society_admin"]}><Visitors /></ProtectedRoute>} />
             <Route path="complaints" element={<ProtectedRoute allowedRoles={["society_admin"]}><Complaints /></ProtectedRoute>} />
             <Route path="billing" element={<ProtectedRoute allowedRoles={["society_admin"]}><Billing /></ProtectedRoute>} />
+            <Route path="expenses" element={<ProtectedRoute allowedRoles={["society_admin"]}><Expenses /></ProtectedRoute>} />
             <Route path="parking" element={<ProtectedRoute allowedRoles={["society_admin"]}><Parking /></ProtectedRoute>} />
             <Route path="notices" element={<ProtectedRoute allowedRoles={["society_admin"]}><Notices /></ProtectedRoute>} />
+            <Route path="amenities" element={<ProtectedRoute allowedRoles={["society_admin"]}><AdminAmenities /></ProtectedRoute>} />
           </Route>
 
           {/* Resident */}
@@ -108,6 +113,7 @@ function App() {
             <Route path="bills" element={<ProtectedRoute allowedRoles={["resident"]}><MyBills /></ProtectedRoute>} />
             <Route path="parking" element={<ProtectedRoute allowedRoles={["resident"]}><MyParking /></ProtectedRoute>} />
             <Route path="notices" element={<ProtectedRoute allowedRoles={["resident"]}><NoticesView /></ProtectedRoute>} />
+            <Route path="amenities" element={<ProtectedRoute allowedRoles={["resident"]}><MyAmenities /></ProtectedRoute>} />
           </Route>
 
           {/* Security Staff */}

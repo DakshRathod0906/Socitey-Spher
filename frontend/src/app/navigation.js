@@ -26,6 +26,7 @@ export const NAVIGATION_CONFIG = {
     { name: "Visitors", href: "/admin/visitors", icon: Shield },
     { name: "Complaints", href: "/admin/complaints", icon: MessageSquare },
     { name: "Billing", href: "/admin/billing", icon: CreditCard },
+    { name: "Expenses", href: "/admin/expenses", icon: FileText },
     { name: "Parking", href: "/admin/parking", icon: Car },
     { name: "Amenities", href: "/admin/amenities", icon: Ticket },
     { name: "Notices", href: "/admin/notices", icon: Bell },
@@ -38,6 +39,7 @@ export const NAVIGATION_CONFIG = {
     { name: "My Complaints", href: "/resident/complaints", icon: MessageSquare },
     { name: "My Bills", href: "/resident/bills", icon: CreditCard },
     { name: "My Vehicles", href: "/resident/parking", icon: Car },
+    { name: "Amenities", href: "/resident/amenities", icon: Ticket },
     { name: "Notices", href: "/resident/notices", icon: Bell },
   ],
   security: [
