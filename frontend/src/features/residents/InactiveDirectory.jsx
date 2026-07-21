@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DataTable, FilterBar } from "../../components/shared";
 import { LoadingScreen } from "../../components/feedback";
-import { useUsers } from "./hooks/useUsers";
+import { useUsers } from "./hooks/useResidents";
 
 export default function InactiveDirectory() {
   const [search, setSearch] = useState("");

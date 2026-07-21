@@ -1,19 +1,22 @@
 import { useState } from "react";
-import { MoreVertical, Edit, Trash2 } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Download } from "lucide-react";
 import { DataTable, FilterBar } from "../../components/shared";
-import { Badge, Dropdown } from "../../components/ui";
+import { Badge, Dropdown, Button } from "../../components/ui";
 import { LoadingScreen } from "../../components/feedback";
-import { useResidents, useDeactivateResident } from "./hooks/useResidents";
+import { useResidents } from "./hooks/useResidents";
 import { canManageResidents } from "../../lib/permissions";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "sonner";
+import { exportToCSV } from "../../lib/exportUtils";
+import DeactivateModal from "./components/DeactivateModal";
 
 export default function ResidentDirectory() {
   const { user } = useAuth();
   const [filters, setFilters] = useState({ page: 1, limit: 10, search: "" });
+  const [selectedUserForDeactivation, setSelectedUserForDeactivation] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
   
   const { data: residents, meta, isLoading, isError } = useResidents(filters);
-  const { mutate: deactivateResident } = useDeactivateResident();
 
   const columns = [
     { 
@@ -49,11 +52,7 @@ export default function ResidentDirectory() {
                 label: "Deactivate", 
                 icon: Trash2, 
                 danger: true, 
-                onClick: () => {
-                  if (confirm(`Are you sure you want to deactivate ${row.name}?`)) {
-                    deactivateResident(row._id);
-                  }
-                } 
+                onClick: () => setSelectedUserForDeactivation(row)
               },
             ]}
             trigger={
@@ -66,6 +65,14 @@ export default function ResidentDirectory() {
       }
     }
   ];
+
+  const handleExport = () => {
+    const dataToExport = selectedRows.length > 0 
+      ? residents.filter(r => selectedRows.includes(r._id))
+      : residents;
+    
+    exportToCSV(dataToExport, "Residents", columns.filter(c => c.accessor !== "actions"));
+  };
 
   if (isLoading) return <LoadingScreen message="Loading directory..." />;
 
@@ -82,16 +89,31 @@ export default function ResidentDirectory() {
       <FilterBar 
         searchPlaceholder="Search by name or email..."
         onSearch={(val) => setFilters({ ...filters, search: val, page: 1 })}
+        actions={
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={!residents || residents.length === 0}>
+            <Download size={16} className="mr-2" />
+            {selectedRows.length > 0 ? `Export Selected (${selectedRows.length})` : "Export Filtered"}
+          </Button>
+        }
       />
 
       <DataTable 
         columns={columns}
         data={residents}
+        selectable={true}
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
         pagination={{
           currentPage: filters.page,
           totalPages: meta?.totalPages || 1,
           onPageChange: (page) => setFilters({ ...filters, page })
         }}
+      />
+
+      <DeactivateModal 
+        open={!!selectedUserForDeactivation}
+        onClose={() => setSelectedUserForDeactivation(null)}
+        user={selectedUserForDeactivation}
       />
     </div>
   );

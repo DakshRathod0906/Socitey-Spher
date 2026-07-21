@@ -1,99 +1,103 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { queryKeys } from "../../../services/queryKeys";
-import { cacheHelpers } from "../../../lib/cacheHelpers";
-import * as residentApi from "../api/resident.api";
-import * as userApi from "../api/user.api";
+import { 
+  fetchResidents, 
+  fetchUsers, 
+  deactivateUser, 
+  inviteResident, 
+  fetchInvitations, 
+  revokeInvitation 
+} from "../api/residentApi";
 
-/**
- * Standardized hook for listing residents with pagination and search.
- */
 export const useResidents = (filters = {}) => {
-  const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
-    queryKey: [...queryKeys.residents, filters],
-    queryFn: () => residentApi.fetchResidents(filters),
-    keepPreviousData: true,
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["residents", filters],
+    queryFn: () => fetchResidents(filters),
   });
 
   return {
     data: data?.data || [],
     meta: data?.meta || null,
     isLoading,
-    isFetching,
     isError,
-    error,
     refetch,
   };
 };
 
-/**
- * Mutation for inviting a new resident.
- * Standard Mutation Pattern: Success -> Toast -> Invalidate -> (caller handles modal close)
- */
-export const useInviteResident = (options = {}) => {
-  const { onSuccess, ...restOptions } = options;
+export const useUsers = (filters = { status: "ACTIVE" }) => {
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["users", filters],
+    queryFn: () => fetchUsers(filters),
+  });
+
+  return {
+    data: data || [],
+    isLoading,
+    isError,
+    refetch,
+  };
+};
+
+export const useDeactivateUser = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: residentApi.inviteResident,
-    onSuccess: (data, variables, context) => {
-      toast.success("Invitation sent successfully.");
-      cacheHelpers.invalidateResidents();
-      cacheHelpers.invalidateDashboard(); // Invalidate dashboard since total count may change
-      if (onSuccess) onSuccess(data, variables, context);
+    mutationFn: deactivateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["residents"] });
+      toast.success("User deactivated successfully.");
     },
-    ...restOptions,
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to deactivate user");
+    },
   });
 };
 
 export const useInvitations = () => {
-  return useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["invitations"],
-    queryFn: residentApi.fetchInvitations,
+    queryFn: fetchInvitations,
+  });
+
+  return {
+    data: data || [],
+    isLoading,
+    isError,
+    refetch,
+  };
+};
+
+export const useInviteResident = (options = {}) => {
+  const queryClient = useQueryClient();
+  const { onSuccess, ...restOptions } = options;
+
+  return useMutation({
+    mutationFn: inviteResident,
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ["invitations"] });
+      queryClient.invalidateQueries({ queryKey: ["residents"] });
+      toast.success("Invitation sent successfully.");
+      if (onSuccess) onSuccess(data, variables, context);
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to send invitation");
+    },
+    ...restOptions,
   });
 };
 
-export const useRevokeInvitation = (options = {}) => {
-  const { onSuccess, ...restOptions } = options;
+export const useRevokeInvitation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: residentApi.revokeInvitation,
-    onSuccess: (data, variables, context) => {
+    mutationFn: revokeInvitation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invitations"] });
+      queryClient.invalidateQueries({ queryKey: ["residents"] });
       toast.success("Invitation revoked successfully.");
-      cacheHelpers.invalidateResidents();
-      if (onSuccess) onSuccess(data, variables, context);
     },
-    ...restOptions,
-  });
-};
-
-/**
- * Mutation for updating resident details.
- */
-export const useUpdateResident = (options = {}) => {
-  const { onSuccess, ...restOptions } = options;
-  return useMutation({
-    mutationFn: ({ id, payload }) => residentApi.updateResident(id, payload),
-    onSuccess: (data, variables, context) => {
-      toast.success("Resident updated successfully.");
-      cacheHelpers.invalidateResidents();
-      cacheHelpers.invalidateResident(variables.id);
-      if (onSuccess) onSuccess(data, variables, context);
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to revoke invitation");
     },
-    ...restOptions,
-  });
-};
-
-/**
- * Mutation for deactivating a resident.
- */
-export const useDeactivateResident = (options = {}) => {
-  const { onSuccess, ...restOptions } = options;
-  return useMutation({
-    mutationFn: userApi.deactivateUser,
-    onSuccess: (data, variables, context) => {
-      toast.success("User deactivated successfully.");
-      cacheHelpers.invalidateResidents();
-      cacheHelpers.invalidateDashboard();
-      if (onSuccess) onSuccess(data, variables, context);
-    },
-    ...restOptions,
   });
 };
