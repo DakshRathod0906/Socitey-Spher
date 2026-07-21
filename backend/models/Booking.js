@@ -8,11 +8,11 @@ const bookingSchema = new mongoose.Schema(
     bookingDate: { type: String, required: true }, // YYYY-MM-DD
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
-    status: { type: String, enum: ["confirmed", "cancelled"], default: "confirmed" },
+    status: { type: String, enum: ["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"], default: "CONFIRMED" },
   },
   { timestamps: true }
 );
 
-bookingSchema.index({ amenityId: 1, bookingDate: 1, startTime: 1 }, { unique: true });
+bookingSchema.index({ societyId: 1, amenityId: 1, bookingDate: 1 });
 
 export default mongoose.model("Booking", bookingSchema);

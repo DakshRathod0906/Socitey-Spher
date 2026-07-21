@@ -1,20 +1,28 @@
 import express from "express";
+import { protect, authorize } from "../middleware/auth.js";
+import { enforceTenant } from "../middleware/tenant.js";
 import {
   createAmenity,
   listAmenities,
+  updateAmenity,
   createBooking,
   listBookings,
-  cancelBooking,
+  cancelBooking
 } from "../controllers/amenityController.js";
-import { protect, authorize } from "../middleware/auth.js";
-import { enforceTenant } from "../middleware/tenant.js";
 
 const router = express.Router();
 
-router.post("/", protect, authorize("society_admin"), enforceTenant, createAmenity);
-router.get("/", protect, enforceTenant, listAmenities);
-router.post("/bookings", protect, authorize("resident"), enforceTenant, createBooking);
-router.get("/bookings", protect, enforceTenant, listBookings);
-router.put("/bookings/:id/cancel", protect, enforceTenant, cancelBooking);
+router.use(protect);
+router.use(enforceTenant);
+
+// Amenities
+router.post("/", authorize("society_admin"), createAmenity);
+router.get("/", listAmenities);
+router.put("/:id", authorize("society_admin"), updateAmenity);
+
+// Bookings
+router.post("/bookings", createBooking);
+router.get("/bookings", listBookings);
+router.put("/bookings/:id/cancel", cancelBooking);
 
 export default router;
