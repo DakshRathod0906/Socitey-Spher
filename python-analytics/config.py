@@ -20,12 +20,18 @@ BASE_DIR = Path(__file__).parent.resolve()
 RAW_DATA_DIR = BASE_DIR / "datasets" / "raw"
 CLEAN_DATA_DIR = BASE_DIR / "datasets" / "clean"
 PROCESSED_DATA_DIR = BASE_DIR / "datasets" / "processed"
+TRAINING_DATA_DIR = BASE_DIR / "datasets" / "training"
+VALIDATION_DATA_DIR = BASE_DIR / "datasets" / "validation"
+TEST_DATA_DIR = BASE_DIR / "datasets" / "test"
 
 REPORT_DIR = BASE_DIR / "reports"
+PROFILING_DIR = REPORT_DIR / "profiling"
+EVALUATION_DIR = REPORT_DIR / "evaluation"
 CHART_DIR = BASE_DIR / "charts"
 LOG_DIR = BASE_DIR / "logs"
 METADATA_DIR = BASE_DIR / "metadata"
+MODEL_DIR = BASE_DIR / "models"
 
 # Create directories if they don't exist
-for d in [RAW_DATA_DIR, CLEAN_DATA_DIR, PROCESSED_DATA_DIR, REPORT_DIR, CHART_DIR, LOG_DIR, METADATA_DIR]:
+for d in [RAW_DATA_DIR, CLEAN_DATA_DIR, PROCESSED_DATA_DIR, TRAINING_DATA_DIR, VALIDATION_DATA_DIR, TEST_DATA_DIR, REPORT_DIR, PROFILING_DIR, EVALUATION_DIR, CHART_DIR, LOG_DIR, METADATA_DIR, MODEL_DIR]:
     d.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "algorithm": "RandomForestClassifier",
+  "features": [
+    "category"
+  ],
+  "target": "priority",
+  "description": "Predicts complaint priority based on category.",
+  "feature_importances": {
+    "category_CLEANING": 0.10565566288342731,
+    "category_ELECTRICAL": 0.09424934341653796,
+    "category_GARDENING": 0.18626868794390522,
+    "category_LIFT": 0.07324252970941876,
+    "category_OTHER": 0.10625567079553758,
+    "category_PARKING": 0.11444988573608514,
+    "category_PLUMBING": 0.08657921062279662,
+    "category_SECURITY": 0.23329900889229144
+  },
+  "trainedAt": "2026-07-22T10:31:37.829222+00:00"
+}

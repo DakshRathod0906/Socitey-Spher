@@ -1,0 +1,235 @@
+{
+  "collection": "users",
+  "row_count": 13,
+  "column_count": 15,
+  "memory_usage_mb": 0.008485794067382812,
+  "columns": {
+    "_id": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 13,
+      "top_categories": {
+        "6a5b2c21791fda58d447151c": 1,
+        "6a5b33f154b73fc9cb5effe1": 1,
+        "6a5b44a54f53a2d591afd0a0": 1,
+        "6a5b5008120eac5c280cb195": 1,
+        "6a5e3eac6ed32b9a22aee880": 1
+      }
+    },
+    "name": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 10,
+      "top_categories": {
+        "Admin": 2,
+        "Daksh Rathod": 2,
+        "Resident": 2,
+        "Super Admin": 1,
+        "Banko Rathod": 1
+      }
+    },
+    "email": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 13,
+      "top_categories": {
+        "admin@admin.com": 1,
+        "bankorathod73@gmail.com": 1,
+        "daksh.ra090607@gmail.com": 1,
+        "dakshra0906@gmail.com": 1,
+        "dakshra3456@gmail.com": 1
+      }
+    },
+    "password": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 9,
+      "top_categories": {
+        "pwd": 5,
+        "$2a$10$OAK0fM3N/XKJ7seHklfKnOHhU5xjPCcAIDxJGy91DEsfA9cb.sbMq": 1,
+        "$2a$10$2MWLpVgypzUpmgGRSHTzQ.PNSPpB.mgXuTInD90RelnWKb9sNP2pK": 1,
+        "$2a$10$rd1Ya4PLU1IC4g7wUqyrLOI/3IrBfqzY51soZ/BvaPs28gBLYpGKe": 1,
+        "$2a$10$ckInoO56XM7Ei2nbqmy4ZOSH/5HhcqAm7/Wj.v1V4R.MHhSu0NBgi": 1
+      }
+    },
+    "role": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 3,
+      "top_categories": {
+        "society_admin": 6,
+        "resident": 6,
+        "super_admin": 1
+      }
+    },
+    "accountStatus": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "top_categories": {
+        "ACTIVE": 13
+      }
+    },
+    "canLogin": {
+      "type": "bool",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "top_categories": {
+        "true": 13
+      }
+    },
+    "createdAt": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 13,
+      "top_categories": {
+        "2026-07-18 07:32:49.185000+00:00": 1,
+        "2026-07-18 08:06:09.857000+00:00": 1,
+        "2026-07-18 09:17:25.998000+00:00": 1,
+        "2026-07-18 10:06:00.926000+00:00": 1,
+        "2026-07-20 15:28:44.403000+00:00": 1
+      }
+    },
+    "updatedAt": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 13,
+      "top_categories": {
+        "2026-07-18 07:32:49.185000+00:00": 1,
+        "2026-07-18 08:06:09.857000+00:00": 1,
+        "2026-07-18 09:28:09.760000+00:00": 1,
+        "2026-07-18 10:06:00.926000+00:00": 1,
+        "2026-07-20 15:30:27.235000+00:00": 1
+      }
+    },
+    "__v": {
+      "type": "int64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "25%": 0.0,
+      "50%": 0.0,
+      "75%": 0.0,
+      "max": 0.0,
+      "outliers_count": 0
+    },
+    "societyId": {
+      "type": "object",
+      "missing_count": 1,
+      "missing_percentage": 7.6923076923076925,
+      "unique_count": 6,
+      "top_categories": {
+        "6a5fafd8f9a6aaf7b13e2e0b": 3,
+        "6a5b44e54f53a2d591afd0a9": 2,
+        "6a5fb2a3f9a6aaf7b13e2f0e": 2,
+        "6a5e3f086ed32b9a22aee887": 2,
+        "6a605b3907be72cd0147a545": 2
+      }
+    },
+    "phone": {
+      "type": "float64",
+      "missing_count": 6,
+      "missing_percentage": 46.15384615384615,
+      "unique_count": 7,
+      "mean": 4743058620.714286,
+      "std": 4328791456.5421505,
+      "min": 909090909.0,
+      "25%": 1122334450.0,
+      "50%": 2020202020.0,
+      "75%": 9023953085.5,
+      "max": 9979542345.0,
+      "outliers_count": 0
+    },
+    "created_month": {
+      "type": "int64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "mean": 7.0,
+      "std": 0.0,
+      "min": 7.0,
+      "25%": 7.0,
+      "50%": 7.0,
+      "75%": 7.0,
+      "max": 7.0,
+      "outliers_count": 0
+    },
+    "created_weekday": {
+      "type": "int64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 4,
+      "mean": 2.230769230769231,
+      "std": 2.006400016357911,
+      "min": 0.0,
+      "25%": 1.0,
+      "50%": 1.0,
+      "75%": 5.0,
+      "max": 5.0,
+      "outliers_count": 0
+    },
+    "created_hour": {
+      "type": "int64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 8,
+      "mean": 12.307692307692308,
+      "std": 4.8370896102342265,
+      "min": 5.0,
+      "25%": 8.0,
+      "50%": 15.0,
+      "75%": 17.0,
+      "max": 17.0,
+      "outliers_count": 0
+    }
+  },
+  "correlations": {
+    "__v": {
+      "__v": 0.0,
+      "phone": 0.0,
+      "created_month": 0.0,
+      "created_weekday": 0.0,
+      "created_hour": 0.0
+    },
+    "phone": {
+      "__v": 0.0,
+      "phone": 1.0,
+      "created_month": 0.0,
+      "created_weekday": 0.208,
+      "created_hour": 0.379
+    },
+    "created_month": {
+      "__v": 0.0,
+      "phone": 0.0,
+      "created_month": 0.0,
+      "created_weekday": 0.0,
+      "created_hour": 0.0
+    },
+    "created_weekday": {
+      "__v": 0.0,
+      "phone": 0.208,
+      "created_month": 0.0,
+      "created_weekday": 1.0,
+      "created_hour": -0.686
+    },
+    "created_hour": {
+      "__v": 0.0,
+      "phone": 0.379,
+      "created_month": 0.0,
+      "created_weekday": -0.686,
+      "created_hour": 1.0
+    }
+  }
+}

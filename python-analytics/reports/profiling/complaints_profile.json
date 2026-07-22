@@ -1,0 +1,416 @@
+{
+  "collection": "complaints",
+  "row_count": 99,
+  "column_count": 28,
+  "memory_usage_mb": 0.1245126724243164,
+  "columns": {
+    "_id": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 99,
+      "top_categories": {
+        "6a60919d62a1662d3b68031d": 1,
+        "6a60919d62a1662d3b68031e": 1,
+        "6a60919d62a1662d3b68031f": 1,
+        "6a60919d62a1662d3b680320": 1,
+        "6a60919d62a1662d3b680321": 1
+      }
+    },
+    "societyId": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "top_categories": {
+        "6a5b33f154b73fc9cb5effdf": 99
+      }
+    },
+    "residentId": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 6,
+      "top_categories": {
+        "6a5e40d56ed32b9a22aee986": 25,
+        "6a5faffaf9a6aaf7b13e2e20": 19,
+        "6a605fde07be72cd0147a6cc": 16,
+        "6a5faffaf9a6aaf7b13e2e1f": 15,
+        "6a5fb2a4f9a6aaf7b13e2f11": 15
+      }
+    },
+    "flatId": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 89,
+      "top_categories": {
+        "6a605be607be72cd0147a5b1": 3,
+        "6a5e3f3f6ed32b9a22aee915": 2,
+        "6a5e3f3f6ed32b9a22aee921": 2,
+        "6a5e3f3f6ed32b9a22aee950": 2,
+        "6a5b4909656cac97daff6bb6": 2
+      }
+    },
+    "complaintNumber": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 99,
+      "top_categories": {
+        "CMP-2026-0001": 1,
+        "CMP-2026-0002": 1,
+        "CMP-2026-0003": 1,
+        "CMP-2026-0004": 1,
+        "CMP-2026-0005": 1
+      }
+    },
+    "title": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 99,
+      "top_categories": {
+        "Vobis solitudo tamquam solitudo tametsi vito absorbeo.": 1,
+        "Blanditiis caute delibero.": 1,
+        "Deputo veritas vinculum expedita casus supplanto corona deserunt calamitas.": 1,
+        "Solio dolores statim depraedor vester ducimus aequus minima possimus vilis.": 1,
+        "Vicinus ultra virtus admoveo.": 1
+      }
+    },
+    "description": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 99,
+      "top_categories": {
+        "Coaegresco sollicito tollo. Vobis supra sapiente sunt delibero comparo decerno suspendo vulgus. Textilis assumenda acquiro thesaurus venio acidus deprimo est.": 1,
+        "Sui atrocitas excepturi aspicio tenus vestrum. Arcus depraedor cotidie ubi vere credo comedo. Audeo antea stips thermae nam voluptate reiciendis.": 1,
+        "Soleo coma tenuis tero ulterius. Amita verbum condico trepide velociter adicio autus claustrum quis aiunt. Ducimus strenuus umerus sit.": 1,
+        "Celo alter depereo delego adamo suasoria. Sustineo cupio accendo verbera testimonium asperiores coma perferendis. Armarium atrocitas ustilo clam numquam.": 1,
+        "Denique acer corrumpo cupio peccatus spectaculum tumultus. Cui thalassinus varietas celebrer vox ultio suus constans vacuus. Vis a acceptus combibo vulnero arcesso aspicio tempora aegrus.": 1
+      }
+    },
+    "category": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 8,
+      "top_categories": {
+        "PLUMBING": 16,
+        "LIFT": 15,
+        "OTHER": 14,
+        "SECURITY": 13,
+        "PARKING": 13
+      }
+    },
+    "priority": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 4,
+      "top_categories": {
+        "MEDIUM": 29,
+        "HIGH": 26,
+        "LOW": 24,
+        "CRITICAL": 20
+      }
+    },
+    "status": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 6,
+      "top_categories": {
+        "closed": 21,
+        "rejected": 19,
+        "resolved": 16,
+        "assigned": 15,
+        "in_progress": 15
+      }
+    },
+    "residentFeedback": {
+      "type": "float64",
+      "missing_count": 99,
+      "missing_percentage": 100.0,
+      "unique_count": 0,
+      "mean": null,
+      "std": null,
+      "min": null,
+      "25%": null,
+      "50%": null,
+      "75%": null,
+      "max": null,
+      "outliers_count": 0
+    },
+    "expectedResolutionAt": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 99,
+      "top_categories": {
+        "2026-06-15 12:04:18.539": 1,
+        "2026-06-09 10:16:00.908": 1,
+        "2026-05-15 17:09:47.084": 1,
+        "2026-04-27 06:06:39.194": 1,
+        "2026-05-01 04:58:36.455": 1
+      }
+    },
+    "actualResolutionAt": {
+      "type": "object",
+      "missing_count": 62,
+      "missing_percentage": 62.62626262626263,
+      "unique_count": 37,
+      "top_categories": {
+        "2026-07-13 20:52:54.385": 1,
+        "2026-05-30 18:54:46.516": 1,
+        "2026-05-08 16:23:52.075": 1,
+        "2026-07-22 08:41:38.608": 1,
+        "2026-07-13 17:59:53.727": 1
+      }
+    },
+    "isArchived": {
+      "type": "bool",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "top_categories": {
+        "false": 99
+      }
+    },
+    "predictionStatus": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "top_categories": {
+        "PENDING": 99
+      }
+    },
+    "aiOverridden": {
+      "type": "bool",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "top_categories": {
+        "false": 99
+      }
+    },
+    "createdAt": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 99,
+      "top_categories": {
+        "2026-06-13 12:04:18.539000+00:00": 1,
+        "2026-06-07 10:16:00.908000+00:00": 1,
+        "2026-05-13 17:09:47.084000+00:00": 1,
+        "2026-04-25 06:06:39.194000+00:00": 1,
+        "2026-04-29 04:58:36.455000+00:00": 1
+      }
+    },
+    "attachments": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "top_categories": {
+        "[]": 99
+      }
+    },
+    "__v": {
+      "type": "int64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 1,
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "25%": 0.0,
+      "50%": 0.0,
+      "75%": 0.0,
+      "max": 0.0,
+      "outliers_count": 0
+    },
+    "updatedAt": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 5,
+      "top_categories": {
+        "2026-07-22 09:47:09.306000+00:00": 39,
+        "2026-07-22 09:47:09.305000+00:00": 38,
+        "2026-07-22 09:47:09.307000+00:00": 13,
+        "2026-07-22 09:47:09.304000+00:00": 8,
+        "2026-07-22 09:47:09.303000+00:00": 1
+      }
+    },
+    "created_month": {
+      "type": "int64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 4,
+      "mean": 5.737373737373737,
+      "std": 0.8758186675830277,
+      "min": 4.0,
+      "25%": 5.0,
+      "50%": 6.0,
+      "75%": 6.0,
+      "max": 7.0,
+      "outliers_count": 0
+    },
+    "created_weekday": {
+      "type": "int64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 7,
+      "mean": 2.8181818181818183,
+      "std": 1.8259112143045706,
+      "min": 0.0,
+      "25%": 1.0,
+      "50%": 3.0,
+      "75%": 4.0,
+      "max": 6.0,
+      "outliers_count": 0
+    },
+    "created_hour": {
+      "type": "int64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 24,
+      "mean": 11.404040404040405,
+      "std": 6.761112080847308,
+      "min": 0.0,
+      "25%": 6.0,
+      "50%": 12.0,
+      "75%": 17.0,
+      "max": 23.0,
+      "outliers_count": 0
+    },
+    "complaint_age_days": {
+      "type": "float64",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 99,
+      "mean": 45.3379570433821,
+      "std": 24.96757723915152,
+      "min": 0.3445951785532407,
+      "25%": 26.373222655405094,
+      "50%": 44.405097539664354,
+      "75%": 68.2139559077199,
+      "max": 89.11975896327546,
+      "outliers_count": 0
+    },
+    "resolution_time_hours": {
+      "type": "float64",
+      "missing_count": 62,
+      "missing_percentage": 62.62626262626263,
+      "unique_count": 37,
+      "mean": 1003.2506042492492,
+      "std": 632.3030659120797,
+      "min": 8.264105833333334,
+      "25%": 420.89390305555554,
+      "50%": 1021.3542361111112,
+      "75%": 1530.0864075,
+      "max": 2084.860730833333,
+      "outliers_count": 0
+    },
+    "is_open": {
+      "type": "bool",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 2,
+      "top_categories": {
+        "false": 84,
+        "true": 15
+      }
+    },
+    "complaint_age_bucket": {
+      "type": "object",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 4,
+      "top_categories": {
+        "30+ days": 68,
+        "8-30 days": 26,
+        "3-7 days": 4,
+        "0-2 days": 1
+      }
+    },
+    "resolution_sla_missed": {
+      "type": "bool",
+      "missing_count": 0,
+      "missing_percentage": 0.0,
+      "unique_count": 2,
+      "top_categories": {
+        "false": 84,
+        "true": 15
+      }
+    }
+  },
+  "correlations": {
+    "residentFeedback": {
+      "residentFeedback": 0.0,
+      "__v": 0.0,
+      "created_month": 0.0,
+      "created_weekday": 0.0,
+      "created_hour": 0.0,
+      "complaint_age_days": 0.0,
+      "resolution_time_hours": 0.0
+    },
+    "__v": {
+      "residentFeedback": 0.0,
+      "__v": 0.0,
+      "created_month": 0.0,
+      "created_weekday": 0.0,
+      "created_hour": 0.0,
+      "complaint_age_days": 0.0,
+      "resolution_time_hours": 0.0
+    },
+    "created_month": {
+      "residentFeedback": 0.0,
+      "__v": 0.0,
+      "created_month": 1.0,
+      "created_weekday": -0.139,
+      "created_hour": 0.072,
+      "complaint_age_days": -0.945,
+      "resolution_time_hours": -0.953
+    },
+    "created_weekday": {
+      "residentFeedback": 0.0,
+      "__v": 0.0,
+      "created_month": -0.139,
+      "created_weekday": 1.0,
+      "created_hour": -0.025,
+      "complaint_age_days": 0.114,
+      "resolution_time_hours": 0.158
+    },
+    "created_hour": {
+      "residentFeedback": 0.0,
+      "__v": 0.0,
+      "created_month": 0.072,
+      "created_weekday": -0.025,
+      "created_hour": 1.0,
+      "complaint_age_days": -0.026,
+      "resolution_time_hours": 0.188
+    },
+    "complaint_age_days": {
+      "residentFeedback": 0.0,
+      "__v": 0.0,
+      "created_month": -0.945,
+      "created_weekday": 0.114,
+      "created_hour": -0.026,
+      "complaint_age_days": 1.0,
+      "resolution_time_hours": 1.0
+    },
+    "resolution_time_hours": {
+      "residentFeedback": 0.0,
+      "__v": 0.0,
+      "created_month": -0.953,
+      "created_weekday": 0.158,
+      "created_hour": 0.188,
+      "complaint_age_days": 1.0,
+      "resolution_time_hours": 1.0
+    }
+  }
+}
