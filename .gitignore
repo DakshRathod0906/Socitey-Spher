@@ -3,3 +3,21 @@ node_modules/
 dist/
 .DS_Store
 *.log
+
+# Python
+__pycache__/
+*.pyc
+.env.local
+python-analytics/.venv/
+
+# Large Datasets and Generated Files
+python-analytics/datasets/**/*.csv
+python-analytics/models/**/*.joblib
+python-analytics/models/**/*.json
+python-analytics/models/**/*.pkl
+python-analytics/reports/**/*.json
+python-analytics/reports/**/*.csv
+python-analytics/reports/**/*.png
+python-analytics/charts/*.png
+backend/scripts/synthetic/dataset_summary.json
+backend/scripts/generators/

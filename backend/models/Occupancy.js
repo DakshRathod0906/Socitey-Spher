@@ -4,7 +4,8 @@ const occupancySchema = new mongoose.Schema(
   {
     societyId: { type: mongoose.Schema.Types.ObjectId, ref: "Society", required: true },
     flatId: { type: mongoose.Schema.Types.ObjectId, ref: "Flat", required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    occupantName: { type: String }, // For family members without login accounts
     occupancyType: { type: String, enum: ["OWNER", "TENANT"], required: true },
     residentType: { type: String, enum: ["PRIMARY", "FAMILY"], required: true },
     status: { type: String, enum: ["ACTIVE", "PAST"], default: "ACTIVE" },

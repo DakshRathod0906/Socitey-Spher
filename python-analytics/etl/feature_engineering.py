@@ -12,11 +12,22 @@ def engineer_features(df: pd.DataFrame, collection_name: str) -> pd.DataFrame:
         
     df = df.copy()
         
-    # Time-based features for collections with createdAt
-    if 'createdAt' in df.columns:
-        df['created_month'] = df['createdAt'].dt.month
-        df['created_weekday'] = df['createdAt'].dt.dayofweek
-        df['created_hour'] = df['createdAt'].dt.hour
+    date_col = 'createdAt'
+    if collection_name == 'expenses' and 'expenseDate' in df.columns:
+        date_col = 'expenseDate'
+    elif collection_name == 'visitors' and 'expectedDate' in df.columns:
+        date_col = 'expectedDate'
+    elif collection_name == 'visits' and 'expectedArrival' in df.columns:
+        date_col = 'expectedArrival'
+    elif collection_name == 'notices' and 'publishDate' in df.columns:
+        date_col = 'publishDate'
+    
+    # Convert chosen date column to datetime if it's not already
+    if date_col in df.columns:
+        df[date_col] = pd.to_datetime(df[date_col], errors='coerce', utc=True)
+        df['created_month'] = df[date_col].dt.month
+        df['created_weekday'] = df[date_col].dt.dayofweek
+        df['created_hour'] = df[date_col].dt.hour
         
     if collection_name == "complaints":
         if 'createdAt' in df.columns:

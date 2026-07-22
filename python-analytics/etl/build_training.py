@@ -49,35 +49,37 @@ def build_expenses_dataset():
         
     df = pd.read_csv(file_path)
     
-    if 'created_month' in df.columns and 'amount' in df.columns:
-        monthly_df = df.groupby('created_month')['amount'].sum().reset_index()
-        monthly_df['created_month'] = pd.to_datetime(monthly_df['created_month'])
-        monthly_df = monthly_df.sort_values('created_month')
+    if 'expenseDate' in df.columns and 'amount' in df.columns:
+        df['expense_month'] = pd.to_datetime(df['expenseDate'], errors='coerce', utc=True).dt.to_period('M')
+        monthly_df = df.groupby('expense_month')['amount'].sum().reset_index()
+        monthly_df['expense_month'] = monthly_df['expense_month'].dt.to_timestamp()
+        monthly_df = monthly_df.sort_values('expense_month')
         
-        monthly_df['month'] = monthly_df['created_month'].dt.month
-        monthly_df['year'] = monthly_df['created_month'].dt.year
+        monthly_df['month'] = monthly_df['expense_month'].dt.month
+        monthly_df['year'] = monthly_df['expense_month'].dt.year
         monthly_df['prev_month_amount'] = monthly_df['amount'].shift(1)
-        monthly_df = monthly_df.dropna().drop(columns=['created_month'])
+        monthly_df = monthly_df.dropna().drop(columns=['expense_month'])
         
         split_and_save(monthly_df, target_col='amount', collection_name='expenses_forecast', test_size=0.2, val_size=0.1)
 
 def build_visitors_dataset():
-    file_path = config.PROCESSED_DATA_DIR / "visitors.csv"
+    file_path = config.PROCESSED_DATA_DIR / "visits.csv"
     if not file_path.exists():
-        logger.warning("Visitors data not found.")
+        logger.warning("Visits data not found.")
         return
         
     df = pd.read_csv(file_path)
     
-    if 'created_month' in df.columns:
-        monthly_df = df.groupby('created_month').size().reset_index(name='visitor_count')
-        monthly_df['created_month'] = pd.to_datetime(monthly_df['created_month'])
-        monthly_df = monthly_df.sort_values('created_month')
+    if 'expectedArrival' in df.columns:
+        df['visit_month'] = pd.to_datetime(df['expectedArrival'], errors='coerce', utc=True).dt.to_period('M')
+        monthly_df = df.groupby('visit_month').size().reset_index(name='visitor_count')
+        monthly_df['visit_month'] = monthly_df['visit_month'].dt.to_timestamp()
+        monthly_df = monthly_df.sort_values('visit_month')
         
-        monthly_df['month'] = monthly_df['created_month'].dt.month
-        monthly_df['year'] = monthly_df['created_month'].dt.year
+        monthly_df['month'] = monthly_df['visit_month'].dt.month
+        monthly_df['year'] = monthly_df['visit_month'].dt.year
         monthly_df['prev_month_count'] = monthly_df['visitor_count'].shift(1)
-        monthly_df = monthly_df.dropna().drop(columns=['created_month'])
+        monthly_df = monthly_df.dropna().drop(columns=['visit_month'])
         
         split_and_save(monthly_df, target_col='visitor_count', collection_name='visitors_forecast', test_size=0.2, val_size=0.1)
 

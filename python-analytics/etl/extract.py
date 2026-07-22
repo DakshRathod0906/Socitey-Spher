@@ -41,6 +41,7 @@ def run_extraction():
             "expenses",    # Billing/Payments
             "notices",
             "visitors",
+            "visits",      # Actual visits for forecasting
             "vehicles",    # Parking
             "users"
         ]
