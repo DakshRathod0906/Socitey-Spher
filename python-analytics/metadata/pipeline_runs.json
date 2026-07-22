@@ -478,5 +478,131 @@
     "durationSeconds": 0.004,
     "completedAt": "2026-07-22T09:37:52.759363Z",
     "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T094724Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 469,
+    "durationSeconds": 2.152,
+    "completedAt": "2026-07-22T09:47:26.178199Z",
+    "status": "SUCCESS",
+    "collections": {
+      "complaints": 99,
+      "expenses": 57,
+      "notices": 19,
+      "visitors": 222,
+      "vehicles": 59,
+      "users": 13
+    }
+  },
+  {
+    "runId": "20260722T094724Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 469,
+    "durationSeconds": 0.034,
+    "completedAt": "2026-07-22T09:47:26.214602Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T094724Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "transform",
+    "recordsProcessed": 469,
+    "durationSeconds": 0.022,
+    "completedAt": "2026-07-22T09:47:26.238013Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T094724Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "feature_engineering",
+    "recordsProcessed": 469,
+    "durationSeconds": 0.015,
+    "completedAt": "2026-07-22T09:47:26.254426Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T094724Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "load",
+    "recordsProcessed": 469,
+    "durationSeconds": 0.015,
+    "completedAt": "2026-07-22T09:47:26.271047Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T094729Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 469,
+    "durationSeconds": 2.142,
+    "completedAt": "2026-07-22T09:47:31.506654Z",
+    "status": "SUCCESS",
+    "collections": {
+      "complaints": 99,
+      "expenses": 57,
+      "notices": 19,
+      "visitors": 222,
+      "vehicles": 59,
+      "users": 13
+    }
+  },
+  {
+    "runId": "20260722T094729Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 469,
+    "durationSeconds": 0.015,
+    "completedAt": "2026-07-22T09:47:31.524016Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T094729Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "transform",
+    "recordsProcessed": 469,
+    "durationSeconds": 0.02,
+    "completedAt": "2026-07-22T09:47:31.545585Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T094729Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "feature_engineering",
+    "recordsProcessed": 469,
+    "durationSeconds": 0.011,
+    "completedAt": "2026-07-22T09:47:31.557959Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T094729Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "load",
+    "recordsProcessed": 469,
+    "durationSeconds": 0.012,
+    "completedAt": "2026-07-22T09:47:31.571770Z",
+    "status": "SUCCESS"
   }
 ]

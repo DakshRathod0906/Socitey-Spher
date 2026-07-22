@@ -31,3 +31,16 @@ def get_health():
             reports_generated=0,
             charts_generated=0
         )
+
+from api.schemas.health import PipelineResponse
+
+@router.get("/pipeline", response_model=PipelineResponse)
+def get_pipeline():
+    metadata = DataService.get_pipeline_metadata()
+    return PipelineResponse(
+        status=metadata.get("status", "Unknown"),
+        lastRun=metadata.get("lastRun", "Unknown"),
+        duration=metadata.get("duration", 0.0),
+        recordsProcessed=metadata.get("recordsProcessed", 0),
+        version=metadata.get("version", "Unknown")
+    )

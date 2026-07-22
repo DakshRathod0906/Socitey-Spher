@@ -34,6 +34,7 @@ const Parking = lazy(() => import("./features/parking/Parking"));
 const Notices = lazy(() => import("./features/notices/Notices"));
 const AdminAmenities = lazy(() => import("./features/amenities/AdminAmenities"));
 const Expenses = lazy(() => import("./features/expenses/Expenses"));
+const AnalyticsDashboard = lazy(() => import("./features/analytics/pages/AnalyticsDashboard"));
 
 // Resident
 const ResidentDashboard = lazy(() => import("./features/dashboard/ResidentDashboard"));
@@ -102,6 +103,7 @@ function App() {
             <Route path="parking" element={<ProtectedRoute allowedRoles={["society_admin"]}><Parking /></ProtectedRoute>} />
             <Route path="notices" element={<ProtectedRoute allowedRoles={["society_admin"]}><Notices /></ProtectedRoute>} />
             <Route path="amenities" element={<ProtectedRoute allowedRoles={["society_admin"]}><AdminAmenities /></ProtectedRoute>} />
+            <Route path="analytics" element={<ProtectedRoute allowedRoles={["society_admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
           </Route>
 
           {/* Resident */}

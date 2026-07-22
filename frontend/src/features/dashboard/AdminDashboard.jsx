@@ -2,6 +2,7 @@ import { Users, Shield, MessageSquare, CreditCard, Activity } from "lucide-react
 import { PageHeader, StatCard, DataTable } from "../../components/shared";
 import { useAdminDashboard } from "./hooks/useDashboard";
 import { LoadingScreen } from "../../components/feedback";
+import QuickAnalyticsCard from "../analytics/components/QuickAnalyticsCard";
 
 export default function AdminDashboard() {
   const { data: stats, isLoading, isError } = useAdminDashboard();
@@ -56,18 +57,7 @@ export default function AdminDashboard() {
         </div>
         
         <div>
-          <h2 className="text-lg font-semibold text-text mb-4">System Health</h2>
-          <div className="bg-card rounded-xl border border-border p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-success-light flex items-center justify-center">
-                <Activity className="h-5 w-5 text-success" />
-              </div>
-              <div>
-                <p className="font-medium text-text">All systems operational</p>
-                <p className="text-xs text-muted">Connected to Backend</p>
-              </div>
-            </div>
-          </div>
+          <QuickAnalyticsCard />
         </div>
       </div>
     </div>

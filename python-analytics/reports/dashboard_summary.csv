@@ -1,7 +1,10 @@
 Category,Metric,Value
-billing,total_transactions,1.0
-billing,total_amount,500.0
-visitors,total,1.0
+complaints,total,99.0
+complaints,open_count,15.0
+complaints,closed_count,84.0
+billing,total_transactions,57.0
+billing,total_amount,142991.84
+visitors,total,222.0
 users,total,13.0
 users,by_role_society_admin,6.0
 users,by_role_resident,6.0

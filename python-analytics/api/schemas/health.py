@@ -6,3 +6,10 @@ class HealthResponse(BaseModel):
     manifest_version: str
     reports_generated: int
     charts_generated: int
+
+class PipelineResponse(BaseModel):
+    status: str
+    lastRun: str
+    duration: float
+    recordsProcessed: int
+    version: str

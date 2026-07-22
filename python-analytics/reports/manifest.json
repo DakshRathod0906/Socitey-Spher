@@ -1,10 +1,11 @@
 {
-  "generatedAt": "2026-07-22T09:37:53.678694+00:00Z",
+  "generatedAt": "2026-07-22T09:47:32.462956+00:00Z",
   "reports": [
     "dashboard_summary.csv",
     "dashboard_summary.json"
   ],
   "charts": [
+    "complaints_status_pie.png",
     "expenses_status.png",
     "user_roles_distribution.png"
   ]

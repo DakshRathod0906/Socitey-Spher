@@ -1,11 +1,15 @@
 {
-  "complaints": {},
+  "complaints": {
+    "total": 99,
+    "open_count": 15,
+    "closed_count": 84
+  },
   "billing": {
-    "total_transactions": 1,
-    "total_amount": 500.0
+    "total_transactions": 57,
+    "total_amount": 142991.84
   },
   "visitors": {
-    "total": 1
+    "total": 222
   },
   "users": {
     "total": 13,
