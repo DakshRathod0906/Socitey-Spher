@@ -1,0 +1,8 @@
+pymongo
+pandas
+python-dotenv
+matplotlib
+seaborn
+fastapi
+uvicorn[standard]
+pydantic-settings

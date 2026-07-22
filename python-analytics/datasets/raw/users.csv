@@ -1,0 +1,14 @@
+_id,name,email,password,role,accountStatus,canLogin,createdAt,updatedAt,__v,societyId,phone
+6a5b2c21791fda58d447151c,Super Admin,admin@admin.com,$2a$10$OAK0fM3N/XKJ7seHklfKnOHhU5xjPCcAIDxJGy91DEsfA9cb.sbMq,super_admin,ACTIVE,True,2026-07-18 07:32:49.185,2026-07-18 07:32:49.185,0,,
+6a5b33f154b73fc9cb5effe1,Banko Rathod,bankorathod73@gmail.com,$2a$10$2MWLpVgypzUpmgGRSHTzQ.PNSPpB.mgXuTInD90RelnWKb9sNP2pK,society_admin,ACTIVE,True,2026-07-18 08:06:09.857,2026-07-18 08:06:09.857,0,6a5b33f154b73fc9cb5effdf,1234567890
+6a5b44a54f53a2d591afd0a0,Daksh Rathod,daksh.ra090607@gmail.com,$2a$10$ckInoO56XM7Ei2nbqmy4ZOSH/5HhcqAm7/Wj.v1V4R.MHhSu0NBgi,society_admin,ACTIVE,True,2026-07-18 09:17:25.998,2026-07-18 09:28:09.760,0,6a5b44e54f53a2d591afd0a9,09023953085
+6a5b5008120eac5c280cb195,Daksh Rathod,dakshra0906@gmail.com,$2a$10$rd1Ya4PLU1IC4g7wUqyrLOI/3IrBfqzY51soZ/BvaPs28gBLYpGKe,resident,ACTIVE,True,2026-07-18 10:06:00.926,2026-07-18 10:06:00.926,0,6a5b44e54f53a2d591afd0a9,9023953086
+6a5e3eac6ed32b9a22aee880,Saroj Rathod,dakshra3456@gmail.com,$2a$10$9ToSMORsL2/2h/FFLkhTyOVYg.Tozbbz6VeM8ShUQ4wuKvZN6EcbK,society_admin,ACTIVE,True,2026-07-20 15:28:44.403,2026-07-20 15:30:27.235,0,6a5e3f086ed32b9a22aee887,9979542345
+6a5e40d56ed32b9a22aee986,donbhai Rathod,24002171210153@mail.ljku.edu.in,$2a$10$/mrTx/8Pp7ICuhWMvYwTbeWtK48EYcG6qcvx47ONf1..4xFDRVZjq,resident,ACTIVE,True,2026-07-20 15:37:57.990,2026-07-20 15:37:57.990,0,6a5e3f086ed32b9a22aee887,0909090909
+6a5faffaf9a6aaf7b13e2e1e,Admin,adminb@test.com,pwd,society_admin,ACTIVE,True,2026-07-21 17:44:26.950,2026-07-21 17:46:26.019,0,6a5fafd8f9a6aaf7b13e2e0b,
+6a5faffaf9a6aaf7b13e2e1f,Resident,resb@test.com,pwd,resident,ACTIVE,True,2026-07-21 17:44:27.015,2026-07-21 17:46:26.082,0,6a5fafd8f9a6aaf7b13e2e0b,
+6a5faffaf9a6aaf7b13e2e20,Res2,res2@test.com,pwd,resident,ACTIVE,True,2026-07-21 17:44:27.154,2026-07-21 17:46:26.147,0,6a5fafd8f9a6aaf7b13e2e0b,
+6a5fb2a4f9a6aaf7b13e2f10,Admin,admin_pat@test.com,pwd,society_admin,ACTIVE,True,2026-07-21 17:55:48.018,2026-07-21 17:55:53.857,0,6a5fb2a3f9a6aaf7b13e2f0e,
+6a5fb2a4f9a6aaf7b13e2f11,Resident,res_pat@test.com,pwd,resident,ACTIVE,True,2026-07-21 17:55:48.921,2026-07-21 17:55:54.002,0,6a5fb2a3f9a6aaf7b13e2f0e,
+6a605aee07be72cd0147a53c,Riya Panchal,panchalriya092@gmail.com,$2a$10$crgMrudsBdjqioIp6E3n1O26rbKblnaBJH/gITkf5r3ru3FbOH3MW,society_admin,ACTIVE,True,2026-07-22 05:53:50.040,2026-07-22 05:56:53.127,0,6a605b3907be72cd0147a545,1010101010
+6a605fde07be72cd0147a6cc,Xyz Abc,xyza02545@gmail.com,$2a$10$5o.qcmr6K6wrQz81jenKq.7X.hyH9ZkacWPdcNMu6C1l55KfH.XJS,resident,ACTIVE,True,2026-07-22 06:14:54.012,2026-07-22 06:14:54.012,0,6a605b3907be72cd0147a545,2020202020

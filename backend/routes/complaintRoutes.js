@@ -12,13 +12,13 @@ import {
 } from "../controllers/complaintController.js";
 import { protect, authorize } from "../middleware/auth.js";
 import { enforceTenant } from "../middleware/tenant.js";
-import { uploadServicePhoto } from "../middleware/uploadMiddleware.js";
+import { uploadComplaintImages } from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
 router.use(protect, enforceTenant);
 
-router.post("/", authorize("resident"), uploadServicePhoto, createComplaint);
+router.post("/", authorize("resident"), uploadComplaintImages, createComplaint);
 router.get("/", listComplaints);
 router.get("/:id", getComplaint);
 

@@ -1,0 +1,18 @@
+{
+  "complaints": {},
+  "billing": {
+    "total_transactions": 1,
+    "total_amount": 500.0
+  },
+  "visitors": {
+    "total": 1
+  },
+  "users": {
+    "total": 13,
+    "by_role": {
+      "society_admin": 6,
+      "resident": 6,
+      "super_admin": 1
+    }
+  }
+}

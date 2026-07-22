@@ -1,0 +1,482 @@
+[
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "extract",
+    "recordsProcessed": 0,
+    "durationSeconds": 1.9,
+    "completedAt": "2026-07-22T09:04:11.985624Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "extract",
+    "recordsProcessed": 16,
+    "durationSeconds": 1.81,
+    "completedAt": "2026-07-22T09:05:11.432653Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "extract",
+    "recordsProcessed": 16,
+    "durationSeconds": 1.41,
+    "completedAt": "2026-07-22T09:06:54.478916Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "validate",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.02,
+    "completedAt": "2026-07-22T09:06:54.503836Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "transform",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.02,
+    "completedAt": "2026-07-22T09:06:54.527052Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "feature_engineering",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.01,
+    "completedAt": "2026-07-22T09:06:54.533908Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "load",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:06:54.539219Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "extract",
+    "recordsProcessed": 16,
+    "durationSeconds": 1.32,
+    "completedAt": "2026-07-22T09:08:54.287484Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "validate",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:08:54.291070Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "transform",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.01,
+    "completedAt": "2026-07-22T09:08:54.304069Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "feature_engineering",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:08:54.308978Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "load",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.01,
+    "completedAt": "2026-07-22T09:08:54.315314Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "extract",
+    "recordsProcessed": 0,
+    "durationSeconds": 2.05,
+    "completedAt": "2026-07-22T09:13:14.074103Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "validate",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:13:14.076459Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "transform",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:13:14.082414Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "feature_engineering",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:13:14.083530Z",
+    "status": "SUCCESS"
+  },
+  {
+    "pipeline": "Sprint10_ETL",
+    "step": "load",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:13:14.084806Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T092855Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 0,
+    "durationSeconds": 1.954,
+    "completedAt": "2026-07-22T09:28:57.531752Z",
+    "status": "SUCCESS_WITH_WARNINGS",
+    "collections": {
+      "complaints": 0,
+      "expenses": 0,
+      "notices": 0,
+      "visitors": 0,
+      "vehicles": 0,
+      "users": 0
+    },
+    "warning": "No records extracted"
+  },
+  {
+    "runId": "20260722T092855Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:28:57.533359Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T092855Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "transform",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.003,
+    "completedAt": "2026-07-22T09:28:57.537773Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T092855Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "feature_engineering",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:28:57.538913Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T092855Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "load",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.0,
+    "completedAt": "2026-07-22T09:28:57.540063Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T092903Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 0,
+    "durationSeconds": 2.105,
+    "completedAt": "2026-07-22T09:29:05.169897Z",
+    "status": "SUCCESS_WITH_WARNINGS",
+    "collections": {
+      "complaints": 0,
+      "expenses": 0,
+      "notices": 0,
+      "visitors": 0,
+      "vehicles": 0,
+      "users": 0
+    },
+    "warning": "No records extracted"
+  },
+  {
+    "runId": "20260722T092903Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.001,
+    "completedAt": "2026-07-22T09:29:05.172981Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T092903Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "transform",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.005,
+    "completedAt": "2026-07-22T09:29:05.179678Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T092903Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "feature_engineering",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.001,
+    "completedAt": "2026-07-22T09:29:05.182385Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T092903Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "load",
+    "recordsProcessed": 0,
+    "durationSeconds": 0.001,
+    "completedAt": "2026-07-22T09:29:05.184171Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T093320Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 16,
+    "durationSeconds": 1.689,
+    "completedAt": "2026-07-22T09:33:21.988830Z",
+    "status": "SUCCESS",
+    "collections": {
+      "complaints": 0,
+      "expenses": 1,
+      "notices": 0,
+      "visitors": 1,
+      "vehicles": 1,
+      "users": 13
+    }
+  },
+  {
+    "runId": "20260722T093320Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.007,
+    "completedAt": "2026-07-22T09:33:21.997496Z",
+    "status": "FAILED"
+  },
+  {
+    "runId": "20260722T093444Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 16,
+    "durationSeconds": 2.066,
+    "completedAt": "2026-07-22T09:34:46.530274Z",
+    "status": "SUCCESS",
+    "collections": {
+      "complaints": 0,
+      "expenses": 1,
+      "notices": 0,
+      "visitors": 1,
+      "vehicles": 1,
+      "users": 13
+    }
+  },
+  {
+    "runId": "20260722T093444Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.006,
+    "completedAt": "2026-07-22T09:34:46.538285Z",
+    "status": "FAILED"
+  },
+  {
+    "runId": "20260722T093447Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 16,
+    "durationSeconds": 1.4,
+    "completedAt": "2026-07-22T09:34:48.931634Z",
+    "status": "SUCCESS",
+    "collections": {
+      "complaints": 0,
+      "expenses": 1,
+      "notices": 0,
+      "visitors": 1,
+      "vehicles": 1,
+      "users": 13
+    }
+  },
+  {
+    "runId": "20260722T093447Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.007,
+    "completedAt": "2026-07-22T09:34:48.940432Z",
+    "status": "FAILED"
+  },
+  {
+    "runId": "20260722T093748Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 16,
+    "durationSeconds": 1.769,
+    "completedAt": "2026-07-22T09:37:50.380667Z",
+    "status": "SUCCESS",
+    "collections": {
+      "complaints": 0,
+      "expenses": 1,
+      "notices": 0,
+      "visitors": 1,
+      "vehicles": 1,
+      "users": 13
+    }
+  },
+  {
+    "runId": "20260722T093748Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.009,
+    "completedAt": "2026-07-22T09:37:50.390812Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T093748Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "transform",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.013,
+    "completedAt": "2026-07-22T09:37:50.405659Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T093748Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "feature_engineering",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.004,
+    "completedAt": "2026-07-22T09:37:50.410668Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T093748Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "load",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.004,
+    "completedAt": "2026-07-22T09:37:50.416583Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T093751Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "extract",
+    "recordsProcessed": 16,
+    "durationSeconds": 1.512,
+    "completedAt": "2026-07-22T09:37:52.721542Z",
+    "status": "SUCCESS",
+    "collections": {
+      "complaints": 0,
+      "expenses": 1,
+      "notices": 0,
+      "visitors": 1,
+      "vehicles": 1,
+      "users": 13
+    }
+  },
+  {
+    "runId": "20260722T093751Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "validate",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.01,
+    "completedAt": "2026-07-22T09:37:52.733054Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T093751Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "transform",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.011,
+    "completedAt": "2026-07-22T09:37:52.746415Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T093751Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "feature_engineering",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.006,
+    "completedAt": "2026-07-22T09:37:52.753421Z",
+    "status": "SUCCESS"
+  },
+  {
+    "runId": "20260722T093751Z",
+    "pipeline": "Sprint10_ETL",
+    "pipelineVersion": "1.0.0",
+    "database": "societysphere",
+    "step": "load",
+    "recordsProcessed": 16,
+    "durationSeconds": 0.004,
+    "completedAt": "2026-07-22T09:37:52.759363Z",
+    "status": "SUCCESS"
+  }
+]

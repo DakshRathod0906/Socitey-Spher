@@ -1,0 +1,8 @@
+Category,Metric,Value
+billing,total_transactions,1.0
+billing,total_amount,500.0
+visitors,total,1.0
+users,total,13.0
+users,by_role_society_admin,6.0
+users,by_role_resident,6.0
+users,by_role_super_admin,1.0

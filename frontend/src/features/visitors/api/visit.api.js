@@ -7,7 +7,7 @@ import { extractData, extractMeta, mapVisit } from "../../../lib/responseMapper"
  */
 
 export const fetchVisits = async (filters = {}) => {
-  const { data: rawData } = await api.get("/visits", { params: filters });
+  const { data: rawData } = await api.get("/visitors", { params: filters });
   const dataList = extractData({ data: rawData });
   const meta = extractMeta({ data: rawData });
   
@@ -18,17 +18,16 @@ export const fetchVisits = async (filters = {}) => {
 };
 
 export const fetchVisitById = async (id) => {
-  const { data } = await api.get(`/visits/${id}`);
+  const { data } = await api.get(`/visitors/${id}`);
   return mapVisit(extractData({ data }));
 };
 
 export const createVisit = async (payload) => {
-  const { data } = await api.post("/visits", payload);
+  const { data } = await api.post("/visitors", payload);
   return mapVisit(extractData({ data }));
 };
 
 export const cancelVisit = async (id) => {
-  // Uses /api/visits/:id/cancel
-  const { data } = await api.patch(`/visits/${id}/cancel`);
+  const { data } = await api.patch(`/visitors/${id}/cancel`);
   return extractData({ data });
 };

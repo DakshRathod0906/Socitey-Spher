@@ -1,0 +1,2 @@
+_id,societyId,title,category,amount,expenseDate,status,recordedBy,createdAt,updatedAt,__v,created_month,created_weekday,created_hour
+6a5fb078fcc8a293fed54718,6a5fafd8f9a6aaf7b13e2e0b,Plumbing,MAINTENANCE,500,2026-07-21 17:46:32.495,APPROVED,6a5faffaf9a6aaf7b13e2e1e,2026-07-21 17:46:32.497000+00:00,2026-07-21 17:46:32.497000+00:00,0,7,1,17

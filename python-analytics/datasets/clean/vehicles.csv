@@ -1,0 +1,2 @@
+_id,societyId,ownerUserId,type,licensePlate,normalizedLicensePlate,status,createdBy,createdAt,updatedAt,__v
+6a5fb2ac7074cca5c81d32f7,6a5fb2a3f9a6aaf7b13e2f0e,6a5fb2a4f9a6aaf7b13e2f11,FOUR_WHEELER,GJ-01-AB-1234,GJ01AB1234,ACTIVE,6a5fb2a4f9a6aaf7b13e2f11,2026-07-21 17:55:56.209000+00:00,2026-07-21 17:55:56.209000+00:00,0
