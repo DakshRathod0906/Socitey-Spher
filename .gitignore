@@ -9,7 +9,7 @@ __pycache__/
 *.pyc
 .env.local
 python-analytics/.venv/
-
+BACKLOG.md
 # Large Datasets and Generated Files
 python-analytics/datasets/**/*.csv
 python-analytics/models/**/*.joblib
