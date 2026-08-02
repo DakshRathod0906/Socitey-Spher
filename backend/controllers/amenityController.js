@@ -4,9 +4,13 @@ import * as BookingService from "../services/amenity/BookingService.js";
 export const createAmenity = async (req, res) => {
   try {
     const amenity = await AmenityService.createAmenity(req.body, req.societyId);
-    res.status(201).json(amenity);
+    res.status(201).json({
+      success: true,
+      message: "Amenity created successfully",
+      data: amenity
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -15,18 +19,39 @@ export const listAmenities = async (req, res) => {
     // Admins can see inactive amenities
     const includeInactive = req.user.role === "society_admin" || req.user.role === "super_admin";
     const amenities = await AmenityService.listAmenities(req.societyId, includeInactive);
-    res.json(amenities);
+    res.json({
+      success: true,
+      message: "Amenities fetched successfully",
+      data: amenities
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const updateAmenity = async (req, res) => {
   try {
     const amenity = await AmenityService.updateAmenity(req.params.id, req.body, req.societyId);
-    res.json(amenity);
+    res.json({
+      success: true,
+      message: "Amenity updated successfully",
+      data: amenity
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteAmenity = async (req, res) => {
+  try {
+    const result = await AmenityService.deleteAmenity(req.params.id, req.societyId);
+    res.json({
+      success: true,
+      message: result.message,
+      data: result.amenity
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 

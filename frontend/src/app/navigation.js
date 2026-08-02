@@ -11,6 +11,7 @@ import {
   Settings,
   Ticket,
   ClipboardList,
+  Briefcase,
 } from "lucide-react";
 
 export const NAVIGATION_CONFIG = {
@@ -22,7 +23,8 @@ export const NAVIGATION_CONFIG = {
   ],
   society_admin: [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { name: "Users", href: "/admin/residents", icon: Users },
+    { name: "Residents", href: "/admin/residents", icon: Users },
+    { name: "Staff", href: "/admin/staff", icon: Briefcase },
     { name: "Visitors", href: "/admin/visitors", icon: Shield },
     { name: "Complaints", href: "/admin/complaints", icon: MessageSquare },
     { name: "Billing", href: "/admin/billing", icon: CreditCard },

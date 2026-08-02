@@ -7,7 +7,8 @@ import {
   updateAmenity,
   createBooking,
   listBookings,
-  cancelBooking
+  cancelBooking,
+  deleteAmenity
 } from "../controllers/amenityController.js";
 
 const router = express.Router();
@@ -19,6 +20,7 @@ router.use(enforceTenant);
 router.post("/", authorize("society_admin"), createAmenity);
 router.get("/", listAmenities);
 router.put("/:id", authorize("society_admin"), updateAmenity);
+router.delete("/:id", authorize("society_admin"), deleteAmenity);
 
 // Bookings
 router.post("/bookings", createBooking);

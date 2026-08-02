@@ -36,6 +36,9 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
     phone: { type: String },
+    employeeId: { type: String },
+    shift: { type: String, enum: ["Morning", "Evening", "Night"] },
+    gateAssignment: { type: String },
     serviceCategory: {
       type: String,
       enum: ["electrician", "plumber", "carpenter", "gardener", "housekeeping", "lift_technician", "other"],

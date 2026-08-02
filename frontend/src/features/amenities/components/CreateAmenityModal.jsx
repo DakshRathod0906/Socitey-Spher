@@ -5,11 +5,15 @@ export default function CreateAmenityModal({ isOpen, onClose, amenity, onSubmit,
   const isEditMode = !!amenity;
   const [formData, setFormData] = useState({
     name: "",
+    category: "",
     description: "",
     openTime: "06:00",
     closeTime: "22:00",
     capacity: 10,
+    bookingRequired: false,
     slotDurationMinutes: 60,
+    maxBookingsPerResident: 2,
+    advanceBookingDays: 7,
     isActive: true,
   });
   const [error, setError] = useState("");
@@ -18,21 +22,29 @@ export default function CreateAmenityModal({ isOpen, onClose, amenity, onSubmit,
     if (amenity) {
       setFormData({
         name: amenity.name || "",
+        category: amenity.category || "",
         description: amenity.description || "",
         openTime: amenity.openTime || "06:00",
         closeTime: amenity.closeTime || "22:00",
         capacity: amenity.capacity || 10,
+        bookingRequired: amenity.bookingRequired || false,
         slotDurationMinutes: amenity.slotDurationMinutes || 60,
+        maxBookingsPerResident: amenity.maxBookingsPerResident || 2,
+        advanceBookingDays: amenity.advanceBookingDays || 7,
         isActive: amenity.isActive ?? true,
       });
     } else {
       setFormData({
         name: "",
+        category: "",
         description: "",
         openTime: "06:00",
         closeTime: "22:00",
         capacity: 10,
+        bookingRequired: false,
         slotDurationMinutes: 60,
+        maxBookingsPerResident: 2,
+        advanceBookingDays: 7,
         isActive: true,
       });
     }
@@ -54,9 +66,13 @@ export default function CreateAmenityModal({ isOpen, onClose, amenity, onSubmit,
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validation
     if (!formData.name.trim()) {
       setError("Name is required.");
+      return;
+    }
+
+    if (!formData.category) {
+      setError("Category is required.");
       return;
     }
 
@@ -65,20 +81,10 @@ export default function CreateAmenityModal({ isOpen, onClose, amenity, onSubmit,
       return;
     }
 
-    if (formData.slotDurationMinutes <= 0) {
-      setError("Slot duration must be greater than zero.");
-      return;
-    }
-
     const openMins = timeToMinutes(formData.openTime);
     const closeMins = timeToMinutes(formData.closeTime);
 
-    if (openMins === closeMins) {
-      setError("Open and close times cannot be identical.");
-      return;
-    }
-
-    if (openMins > closeMins) {
+    if (openMins >= closeMins) {
       setError("Open time must be before close time.");
       return;
     }
@@ -87,7 +93,7 @@ export default function CreateAmenityModal({ isOpen, onClose, amenity, onSubmit,
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isEditMode ? "Edit Amenity" : "Create Amenity"}>
+    <Modal open={isOpen} onClose={onClose} title={isEditMode ? "Edit Amenity" : "Create Amenity"}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="p-3 bg-red-50 text-red-600 text-sm rounded-md border border-red-100">
@@ -95,17 +101,40 @@ export default function CreateAmenityModal({ isOpen, onClose, amenity, onSubmit,
           </div>
         )}
 
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none"
-            placeholder="e.g. Swimming Pool"
-            required
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none"
+              placeholder="e.g. Swimming Pool"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Gym">Gym</option>
+              <option value="Club House">Club House</option>
+              <option value="Swimming Pool">Swimming Pool</option>
+              <option value="Garden">Garden</option>
+              <option value="Community Hall">Community Hall</option>
+              <option value="Indoor Games">Indoor Games</option>
+              <option value="Outdoor Sports">Outdoor Sports</option>
+              <option value="Parking">Parking</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
         </div>
 
         <div>
@@ -120,7 +149,19 @@ export default function CreateAmenityModal({ isOpen, onClose, amenity, onSubmit,
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Capacity</label>
+            <input
+              type="number"
+              name="capacity"
+              value={formData.capacity}
+              onChange={handleChange}
+              min="1"
+              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none"
+              required
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Open Time</label>
             <input
@@ -145,36 +186,63 @@ export default function CreateAmenityModal({ isOpen, onClose, amenity, onSubmit,
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Capacity (Concurrent)</label>
-            <input
-              type="number"
-              name="capacity"
-              value={formData.capacity}
-              onChange={handleChange}
-              min="1"
-              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Slot Duration (Mins)</label>
-            <input
-              type="number"
-              name="slotDurationMinutes"
-              value={formData.slotDurationMinutes}
-              onChange={handleChange}
-              min="15"
-              step="15"
-              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 outline-none"
-              required
-            />
-          </div>
+        <div className="flex items-center pt-2">
+          <input
+            type="checkbox"
+            id="bookingRequired"
+            name="bookingRequired"
+            checked={formData.bookingRequired}
+            onChange={handleChange}
+            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          />
+          <label htmlFor="bookingRequired" className="ml-2 block text-sm font-medium text-slate-700">
+            Booking Required
+          </label>
         </div>
 
+        {formData.bookingRequired && (
+          <div className="grid grid-cols-3 gap-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Duration (Mins)</label>
+              <select
+                name="slotDurationMinutes"
+                value={formData.slotDurationMinutes}
+                onChange={handleChange}
+                className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-md focus:ring-blue-500 bg-white"
+              >
+                <option value="30">30</option>
+                <option value="60">60</option>
+                <option value="90">90</option>
+                <option value="120">120</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Max/Resident</label>
+              <input
+                type="number"
+                name="maxBookingsPerResident"
+                value={formData.maxBookingsPerResident}
+                onChange={handleChange}
+                min="1"
+                className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-md focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Adv. Days</label>
+              <input
+                type="number"
+                name="advanceBookingDays"
+                value={formData.advanceBookingDays}
+                onChange={handleChange}
+                min="1"
+                className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-md focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        )}
+
         {isEditMode && (
-          <div className="flex items-center mt-4">
+          <div className="flex items-center">
             <input
               type="checkbox"
               id="isActive"

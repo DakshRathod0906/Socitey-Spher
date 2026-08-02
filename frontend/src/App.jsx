@@ -27,6 +27,7 @@ const SetupWizard = lazy(() => import("./features/setup/SetupWizard"));
 const CreateSociety = lazy(() => import("./features/admin/CreateSociety"));
 const PendingApproval = lazy(() => import("./features/admin/PendingApproval"));
 const Residents = lazy(() => import("./features/residents/ResidentsLayout"));
+const StaffManagement = lazy(() => import("./features/staff/pages/StaffManagement"));
 const Visitors = lazy(() => import("./features/visitors/Visitors"));
 const Complaints = lazy(() => import("./features/complaints/Complaints"));
 const Billing = lazy(() => import("./features/billing/Billing"));
@@ -96,6 +97,7 @@ function App() {
             <Route path="create-society" element={<ProtectedRoute allowedRoles={["society_admin"]}><CreateSociety /></ProtectedRoute>} />
             <Route path="pending-approval" element={<ProtectedRoute allowedRoles={["society_admin"]}><PendingApproval /></ProtectedRoute>} />
             <Route path="residents" element={<ProtectedRoute allowedRoles={["society_admin"]}><Residents /></ProtectedRoute>} />
+            <Route path="staff" element={<ProtectedRoute allowedRoles={["society_admin"]}><StaffManagement /></ProtectedRoute>} />
             <Route path="visitors" element={<ProtectedRoute allowedRoles={["society_admin"]}><Visitors /></ProtectedRoute>} />
             <Route path="complaints" element={<ProtectedRoute allowedRoles={["society_admin"]}><Complaints /></ProtectedRoute>} />
             <Route path="billing" element={<ProtectedRoute allowedRoles={["society_admin"]}><Billing /></ProtectedRoute>} />
