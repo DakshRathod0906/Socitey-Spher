@@ -1,21 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  getVehicles,
-  registerVehicle,
   getParkingSlots,
   createParkingSlot,
+  registerVehicle,
+  getVehicles,
   allocateParkingSlot,
-  updateSlotOccupancy
+  updateSlotOccupancy,
+  unassignParkingSlot,
+  deleteParkingSlot,
 } from "../api/parkingApi";
-
-// Queries
-export const useVehicles = (filters = {}) => {
-  return useQuery({
-    queryKey: ["vehicles", filters],
-    queryFn: () => getVehicles(filters),
-  });
-};
 
 export const useParkingSlots = (filters = {}) => {
   return useQuery({
@@ -24,18 +18,10 @@ export const useParkingSlots = (filters = {}) => {
   });
 };
 
-// Mutations
-export const useRegisterVehicle = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: registerVehicle,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
-      toast.success("Vehicle registered successfully");
-    },
-    onError: (err) => {
-      toast.error(err.response?.data?.message || "Failed to register vehicle");
-    },
+export const useVehicles = () => {
+  return useQuery({
+    queryKey: ["vehicles"],
+    queryFn: getVehicles,
   });
 };
 
@@ -53,6 +39,20 @@ export const useCreateSlot = () => {
   });
 };
 
+export const useRegisterVehicle = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: registerVehicle,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      toast.success("Vehicle registered successfully");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to register vehicle");
+    },
+  });
+};
+
 export const useAllocateSlot = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -64,6 +64,34 @@ export const useAllocateSlot = () => {
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || "Failed to allocate slot");
+    },
+  });
+};
+
+export const useUnassignSlot = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: unassignParkingSlot,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["parking_slots"] });
+      toast.success("Parking slot unassigned successfully");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to unassign slot");
+    },
+  });
+};
+
+export const useDeleteSlot = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteParkingSlot,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["parking_slots"] });
+      toast.success("Parking slot deleted successfully");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to delete slot");
     },
   });
 };

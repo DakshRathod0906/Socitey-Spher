@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Plus, Edit, Trash2, Eye, Archive } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Archive, ArchiveRestore } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, DataTable, FilterBar } from "../../components/shared";
 import { Badge, Dropdown, Button } from "../../components/ui";
 import CreateNoticeModal from "./components/CreateNoticeModal";
 import ViewNoticeModal from "./components/ViewNoticeModal";
-import { useNotices, useArchiveNotice, useDeleteNotice } from "./hooks/useNotices";
+import { useNotices, useArchiveNotice, useUnarchiveNotice, useDeleteNotice } from "./hooks/useNotices";
 import { format } from "date-fns";
 
 export default function Notices() {
@@ -17,11 +17,14 @@ export default function Notices() {
   
   const { data: notices = [], isLoading } = useNotices({ archived: statusFilter === "Archived" });
   const { mutate: archiveNotice } = useArchiveNotice();
+  const { mutate: unarchiveNotice } = useUnarchiveNotice();
   const { mutate: deleteNotice } = useDeleteNotice();
   
-  const filteredNotices = notices.filter(n => 
-    n.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredNotices = notices.filter((n) => {
+    const matchSearch = n.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchStatus = statusFilter === "Archived" ? n.isArchived : !n.isArchived;
+    return matchSearch && matchStatus;
+  });
 
   const handleEdit = (notice) => {
     setSelectedNotice(notice);
@@ -85,7 +88,9 @@ export default function Notices() {
             { label: "View Notice", icon: Eye, onClick: () => handleView(row) },
             { label: "Edit", icon: Edit, onClick: () => handleEdit(row) },
             { type: "separator" },
-            ...(row.isArchived ? [] : [{ label: "Archive", icon: Archive, onClick: () => archiveNotice(row._id) }]),
+            row.isArchived
+              ? { label: "Unarchive", icon: ArchiveRestore, onClick: () => unarchiveNotice(row._id) }
+              : { label: "Archive", icon: Archive, onClick: () => archiveNotice(row._id) },
             { label: "Delete", icon: Trash2, danger: true, onClick: () => handleDelete(row._id) },
           ]}
           trigger={

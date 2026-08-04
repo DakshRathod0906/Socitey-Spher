@@ -5,7 +5,7 @@ import { z } from "zod";
 import { Modal, Input, Select, Button } from "../../../components/ui";
 import { staffSchema } from "../utils/validation";
 
-export default function StaffFormModal({ isOpen, onClose, staff, onSubmit, isSubmitting }) {
+export default function StaffFormModal({ isOpen, onClose, staff, onSubmit, isSubmitting, apiError }) {
   const isEditMode = !!staff;
 
   // Refine schema dynamically: Password is required for create, optional for edit
@@ -15,7 +15,7 @@ export default function StaffFormModal({ isOpen, onClose, staff, onSubmit, isSub
         password: z.string().min(8, "Minimum 8 characters"),
       });
 
-  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       role: "security",
@@ -40,6 +40,11 @@ export default function StaffFormModal({ isOpen, onClose, staff, onSubmit, isSub
   return (
     <Modal open={isOpen} onClose={onClose} title={isEditMode ? "Edit Staff Member" : "Add Staff Member"} size="lg">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {apiError && (
+          <div className="p-3 bg-red-50 text-red-600 text-sm rounded-md border border-red-200">
+            {apiError}
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           <Input label="Name" placeholder="Full Name" error={errors.name?.message} {...register("name")} />
           <Input type="email" label="Email" placeholder="Email Address" error={errors.email?.message} {...register("email")} />

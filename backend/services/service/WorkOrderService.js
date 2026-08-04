@@ -11,17 +11,21 @@ import eventBus from "../../events/eventBus.js";
  * This updates the Complaint status to ASSIGNED and records history.
  */
 export const assignWorkOrder = async ({ societyId, complaintId, assignedTo, assignedBy, assignedDepartment = "General" }) => {
-  const complaint = await Complaint.findOne({ _id: complaintId, societyId });
+  const query = { _id: complaintId };
+  if (societyId) query.societyId = societyId;
+
+  const complaint = await Complaint.findOne(query);
   if (!complaint) throw Object.assign(new Error("Complaint not found"), { statusCode: 404 });
 
-  // Ensure complaint is open for assignment (OPEN or REOPENED/OPEN)
-  if (complaint.status !== COMPLAINT_STATUS.OPEN) {
+  // Ensure complaint is open for assignment
+  const validStatuses = [COMPLAINT_STATUS.OPEN, "SUBMITTED", COMPLAINT_STATUS.REOPEN_REQUESTED, COMPLAINT_STATUS.ASSIGNED];
+  if (!validStatuses.includes(complaint.status)) {
     throw Object.assign(new Error(`Cannot assign complaint with status "${complaint.status}"`), { statusCode: 400 });
   }
 
   // Create new WorkOrder (immutable record of this assignment)
   const workOrder = await WorkOrder.create({
-    societyId,
+    societyId: societyId || complaint.societyId,
     complaintId,
     assignedTo,
     assignedBy,
@@ -32,6 +36,7 @@ export const assignWorkOrder = async ({ societyId, complaintId, assignedTo, assi
   // Update Complaint
   const prevStatus = complaint.status;
   complaint.status = COMPLAINT_STATUS.ASSIGNED;
+  complaint.assignedTo = assignedTo;
   await complaint.save();
 
   // Audit trail

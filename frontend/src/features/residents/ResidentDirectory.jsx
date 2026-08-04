@@ -20,9 +20,23 @@ export default function ResidentDirectory() {
 
   const columns = [
     { 
-      header: "Name", 
+      header: "Resident", 
       accessor: "name", 
-      cell: (row) => row.name ? <span className="font-medium">{row.name}</span> : <span className="text-muted italic">Pending Registration</span> 
+      cell: (row) => (
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center overflow-hidden font-bold border border-primary/20 shrink-0">
+            {row.avatar ? (
+              <img src={row.avatar} alt={row.name || "Resident"} className="h-full w-full object-cover" />
+            ) : (
+              (row.name || "R")[0].toUpperCase()
+            )}
+          </div>
+          <div>
+            <p className="font-semibold text-text text-sm">{row.name || "Resident"}</p>
+            <p className="text-xs text-muted font-mono">{row.email || row.phone || "No email"}</p>
+          </div>
+        </div>
+      )
     },
     { header: "Flat", accessor: "flat", cell: (row) => row.flat?.flatNumber || "N/A" },
     { 

@@ -1,13 +1,21 @@
 import { Card } from "../../../components/ui";
-import { Clock, Users, Edit, Power, PowerOff } from "lucide-react";
+import { Clock, Users, Edit, Power, PowerOff, Tag } from "lucide-react";
 
 export default function AdminAmenityCard({ amenity, onEditClick, onToggleStatus, isToggling }) {
   return (
     <Card className={`flex flex-col h-full transition-shadow ${!amenity.isActive ? 'bg-slate-50 opacity-80' : 'hover:shadow-md'}`}>
       <div className="p-5 flex-1 flex flex-col">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-semibold text-lg text-slate-800">{amenity.name}</h3>
-          <span className={`px-2 py-1 text-xs rounded-full font-medium ${amenity.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+        <div className="flex justify-between items-start mb-2 gap-2">
+          <div>
+            <h3 className="font-semibold text-lg text-slate-800">{amenity.name}</h3>
+            {amenity.category && (
+              <span className="inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                <Tag className="w-3 h-3 mr-1" />
+                {amenity.category}
+              </span>
+            )}
+          </div>
+          <span className={`px-2 py-1 text-xs rounded-full font-medium shrink-0 ${amenity.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             {amenity.isActive ? 'Active' : 'Inactive'}
           </span>
         </div>

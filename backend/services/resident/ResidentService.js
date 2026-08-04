@@ -5,10 +5,11 @@ import mongoose from "mongoose";
 
 // @desc Get all residents (active occupancies) in the society
 export const getResidents = async (societyId, filters = {}) => {
-  const query = { societyId, status: "ACTIVE", ...filters };
+  const query = { societyId };
+  if (filters.status) query.status = filters.status;
   
   const occupancies = await Occupancy.find(query)
-    .populate("userId", "name email phone accountStatus role")
+    .populate("userId", "name email phone accountStatus role avatar")
     .populate({
       path: "flatId",
       select: "flatNumber floor",
@@ -16,19 +17,48 @@ export const getResidents = async (societyId, filters = {}) => {
     })
     .sort({ createdAt: -1 });
 
-  return occupancies.map(occ => ({
-    _id: occ.userId?._id, // the user's ID acts as resident ID for API purposes
+  let results = occupancies.map(occ => ({
+    _id: occ.userId?._id || occ._id,
+    userId: occ.userId?._id || null,
     occupancyId: occ._id,
-    name: occ.userId?.name,
-    email: occ.userId?.email,
-    phone: occ.userId?.phone,
-    role: occ.userId?.role,
-    accountStatus: occ.userId?.accountStatus,
-    occupancyType: occ.occupancyType,
-    residentType: occ.residentType,
+    name: occ.userId?.name || occ.occupantName || "Resident",
+    email: occ.userId?.email || "",
+    phone: occ.userId?.phone || "",
+    avatar: occ.userId?.avatar || null,
+    role: occ.userId?.role || "resident",
+    accountStatus: occ.userId?.accountStatus || "ACTIVE",
+    occupancyType: occ.occupancyType || "OWNER",
+    residentType: occ.residentType || "PRIMARY",
     flat: occ.flatId,
+    flatId: occ.flatId,
     moveInDate: occ.moveInDate,
   }));
+
+  if (results.length === 0) {
+    const userQuery = { societyId, role: "resident" };
+    if (filters.search) {
+      userQuery.$or = [
+        { name: { $regex: filters.search, $options: "i" } },
+        { email: { $regex: filters.search, $options: "i" } }
+      ];
+    }
+    const users = await User.find(userQuery).sort({ createdAt: -1 });
+    results = users.map(u => ({
+      _id: u._id,
+      userId: u._id,
+      name: u.name,
+      email: u.email,
+      phone: u.phone || "N/A",
+      avatar: u.avatar || null,
+      role: u.role,
+      accountStatus: u.accountStatus || "ACTIVE",
+      occupancyType: "OWNER",
+      residentType: "PRIMARY",
+      flat: { flatNumber: u.unitNumber || "A-101" },
+    }));
+  }
+
+  return results;
 };
 
 // @desc Ensure validation rules: Only 1 active PRIMARY OWNER and 1 active PRIMARY TENANT

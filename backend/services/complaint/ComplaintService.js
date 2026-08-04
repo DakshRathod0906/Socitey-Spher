@@ -80,6 +80,7 @@ export const rejectComplaint = async (complaintId, userId, reason = "") => {
 
   const prev = complaint.status;
   complaint.status = COMPLAINT_STATUS.REJECTED;
+  complaint.rejectionReason = reason;
   await complaint.save();
 
   await recordHistory({
@@ -254,4 +255,62 @@ export const listComplaints = async ({ societyId, role, userId, status, category
   ]);
 
   return { complaints, total, page, pages: Math.ceil(total / limit) };
+};
+
+/**
+ * Directly resolve a complaint (Society Admin or Staff).
+ */
+export const resolveComplaint = async (societyId, complaintId, remarks = "", userId = null) => {
+  const query = { _id: complaintId };
+  if (societyId) query.societyId = societyId;
+
+  const complaint = await Complaint.findOne(query);
+  if (!complaint) throw Object.assign(new Error("Complaint not found"), { statusCode: 404 });
+
+  const prevStatus = complaint.status;
+  complaint.status = COMPLAINT_STATUS.RESOLVED;
+  complaint.resolvedAt = new Date();
+  await complaint.save();
+
+  await recordHistory({
+    complaintId: complaint._id,
+    action: COMPLAINT_ACTIONS.RESOLVED,
+    previousStatus: prevStatus,
+    newStatus: COMPLAINT_STATUS.RESOLVED,
+    performedBy: userId || complaint.residentId,
+    performedRole: "society_admin",
+    remarks: remarks || "Marked as resolved by admin",
+  });
+
+  return complaint;
+};
+
+/**
+ * Directly update a complaint status (Society Admin).
+ */
+export const updateComplaintStatus = async (societyId, complaintId, status, remarks = "", userId = null) => {
+  const query = { _id: complaintId };
+  if (societyId) query.societyId = societyId;
+
+  const complaint = await Complaint.findOne(query);
+  if (!complaint) throw Object.assign(new Error("Complaint not found"), { statusCode: 404 });
+
+  const prevStatus = complaint.status;
+  complaint.status = status;
+  if (status === COMPLAINT_STATUS.RESOLVED) {
+    complaint.resolvedAt = new Date();
+  }
+  await complaint.save();
+
+  await recordHistory({
+    complaintId: complaint._id,
+    action: status,
+    previousStatus: prevStatus,
+    newStatus: status,
+    performedBy: userId || complaint.residentId,
+    performedRole: "society_admin",
+    remarks: remarks || `Status updated to ${status} by admin`,
+  });
+
+  return complaint;
 };

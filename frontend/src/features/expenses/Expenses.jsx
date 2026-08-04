@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { Plus, Receipt, TrendingDown, Clock, AlertCircle } from "lucide-react";
+import { Plus, Receipt, TrendingDown, Clock, AlertCircle, MoreVertical, CheckCircle, XCircle } from "lucide-react";
 import { PageHeader, DataTable, FilterBar } from "../../components/shared";
-import { Badge, Button } from "../../components/ui";
-import { useExpenses, useCreateExpense } from "./hooks/useExpenses";
+import { Badge, Button, Dropdown } from "../../components/ui";
+import { useExpenses, useCreateExpense, useUpdateExpenseStatus } from "./hooks/useExpenses";
 import CreateExpenseModal from "./components/CreateExpenseModal";
 
 export default function Expenses() {
@@ -13,16 +13,24 @@ export default function Expenses() {
 
   const { data, isLoading } = useExpenses({ status: statusFilter, category: categoryFilter });
   const createMutation = useCreateExpense();
+  const updateStatusMutation = useUpdateExpenseStatus();
 
   const expenses = data?.expenses || [];
 
-  // Local filtering for search query (Title or Vendor)
+  // Local filtering for search query, status, and category
   const filteredExpenses = useMemo(() => {
-    return expenses.filter(e => 
-      e.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      (e.vendorName && e.vendorName.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-  }, [expenses, searchQuery]);
+    return expenses.filter(e => {
+      const matchSearch =
+        !searchQuery ||
+        e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (e.vendorName && e.vendorName.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      const matchStatus = !statusFilter || e.status === statusFilter;
+      const matchCategory = !categoryFilter || e.category === categoryFilter;
+
+      return matchSearch && matchStatus && matchCategory;
+    });
+  }, [expenses, searchQuery, statusFilter, categoryFilter]);
 
   // Derived metrics
   const metrics = useMemo(() => {
@@ -86,26 +94,39 @@ export default function Expenses() {
         };
         return <Badge variant={variants[row.status] || "default"}>{row.status}</Badge>;
       }
-    }
-  ];
-
-  const categoryOptions = [
-    { label: "All", value: "" },
-    { label: "Maintenance", value: "MAINTENANCE" },
-    { label: "Utilities", value: "UTILITIES" },
-    { label: "Salary", value: "SALARY" },
-    { label: "Security", value: "SECURITY" },
-    { label: "Event", value: "EVENT" },
-    { label: "Administration", value: "ADMINISTRATION" },
-    { label: "Repair", value: "REPAIR" },
-    { label: "Other", value: "OTHER" }
-  ];
-
-  const statusOptions = [
-    { label: "All", value: "" },
-    { label: "Approved", value: "APPROVED" },
-    { label: "Pending", value: "PENDING" },
-    { label: "Rejected", value: "REJECTED" }
+    },
+    {
+      header: "Actions",
+      accessor: "actions",
+      align: "right",
+      cell: (row) => (
+        <Dropdown
+          align="right"
+          items={[
+            {
+              label: "Approve Expense",
+              icon: CheckCircle,
+              onClick: () => updateStatusMutation.mutate({ id: row._id, status: "APPROVED" }),
+            },
+            {
+              label: "Mark Pending",
+              icon: Clock,
+              onClick: () => updateStatusMutation.mutate({ id: row._id, status: "PENDING" }),
+            },
+            {
+              label: "Reject Expense",
+              icon: XCircle,
+              onClick: () => updateStatusMutation.mutate({ id: row._id, status: "REJECTED" }),
+            },
+          ]}
+          trigger={
+            <button className="p-1.5 rounded-lg text-muted hover:bg-surface hover:text-text transition-colors">
+              <MoreVertical size={16} />
+            </button>
+          }
+        />
+      ),
+    },
   ];
 
   return (
@@ -113,6 +134,12 @@ export default function Expenses() {
       <PageHeader 
         title="Expenses" 
         subtitle="Manage society expenses and track outgoing payments."
+        action={
+          <Button size="sm" onClick={() => setIsModalOpen(true)}>
+            <Plus size={16} className="mr-2" />
+            Record Expense
+          </Button>
+        }
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
@@ -154,15 +181,50 @@ export default function Expenses() {
         </div>
       </div>
 
-      <FilterBar 
-        searchPlaceholder="Search by title or vendor..."
-        onSearch={setSearchQuery}
-        actionButton={{ label: "Record Expense", icon: Plus, onClick: () => setIsModalOpen(true) }}
-        filters={[
-          { label: "Category", options: categoryOptions, onChange: setCategoryFilter },
-          { label: "Status", options: statusOptions, onChange: setStatusFilter }
-        ]}
-      />
+      {/* Interactive Status & Category Filters */}
+      <div className="bg-card border border-border rounded-xl p-4 space-y-4 shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap gap-2">
+            {["ALL", "APPROVED", "PENDING", "REJECTED"].map((st) => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => setStatusFilter(st === "ALL" ? "" : st)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                  (statusFilter === "" && st === "ALL") || statusFilter === st
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-background border border-border text-muted hover:text-text"
+                }`}
+              >
+                {st === "ALL" ? "All Statuses" : st.replace("_", " ")}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <select
+              className="text-xs py-1.5 px-3 h-9 rounded-lg border border-border bg-background text-text font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+            >
+              <option value="">All Categories</option>
+              <option value="MAINTENANCE">Maintenance</option>
+              <option value="UTILITIES">Utilities</option>
+              <option value="SALARY">Salary</option>
+              <option value="SECURITY">Security</option>
+              <option value="EVENT">Event</option>
+              <option value="ADMINISTRATION">Administration</option>
+              <option value="REPAIR">Repair</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <FilterBar 
+          searchPlaceholder="Search by title or vendor..."
+          onSearch={setSearchQuery}
+        />
+      </div>
 
       {isLoading ? (
         <div className="flex justify-center py-12">

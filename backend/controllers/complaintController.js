@@ -1,6 +1,8 @@
 import * as ComplaintService from "../services/complaint/ComplaintService.js";
 import { processUploadedFile } from "../services/uploadService.js";
 import Complaint from "../models/Complaint.js";
+import Occupancy from "../models/Occupancy.js";
+import { COMPLAINT_CATEGORIES } from "../constants/complaintStatus.js";
 
 // @desc   Resident creates a complaint
 // @route  POST /api/complaints
@@ -8,6 +10,19 @@ export const createComplaint = async (req, res, next) => {
   try {
     const { title, description, category } = req.body;
     
+    // Normalize category to valid uppercase enum
+    const normalizedCategory = category ? String(category).toUpperCase() : "OTHER";
+    const finalCategory = COMPLAINT_CATEGORIES.includes(normalizedCategory) ? normalizedCategory : "OTHER";
+
+    // Lookup flatId if not set directly on req.user
+    let flatId = req.user.flatId || req.user.flat;
+    if (!flatId) {
+      const activeOccupancy = await Occupancy.findOne({ residentId: req.user._id, status: "APPROVED" });
+      if (activeOccupancy) {
+        flatId = activeOccupancy.flatId;
+      }
+    }
+
     let attachments = [];
     if (req.files && req.files.length > 0) {
       attachments = req.files.map(file => ({
@@ -19,10 +34,10 @@ export const createComplaint = async (req, res, next) => {
     const complaint = await ComplaintService.createComplaint({
       societyId: req.societyId,
       residentId: req.user._id,
-      flatId: req.user.flatId,
+      flatId: flatId || null,
       title,
       description,
-      category,
+      category: finalCategory,
       attachments,
     });
 
@@ -140,6 +155,30 @@ export const closeComplaint = async (req, res, next) => {
   try {
     const { rating, feedback } = req.body;
     const complaint = await ComplaintService.closeComplaint(req.params.id, req.user._id, { rating, feedback });
+    res.json({ success: true, data: complaint });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc   Admin/Staff resolves complaint
+// @route  POST /api/complaints/:id/resolve
+export const resolveComplaint = async (req, res, next) => {
+  try {
+    const { remarks } = req.body;
+    const complaint = await ComplaintService.resolveComplaint(req.societyId, req.params.id, remarks, req.user._id);
+    res.json({ success: true, data: complaint });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc   Admin updates complaint status
+// @route  POST /api/complaints/:id/status
+export const updateStatus = async (req, res, next) => {
+  try {
+    const { status, remarks } = req.body;
+    const complaint = await ComplaintService.updateComplaintStatus(req.societyId, req.params.id, status, remarks, req.user._id);
     res.json({ success: true, data: complaint });
   } catch (err) {
     next(err);

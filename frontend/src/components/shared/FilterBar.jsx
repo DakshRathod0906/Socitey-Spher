@@ -24,19 +24,30 @@ export default function FilterBar({
         
         {filters.length > 0 && (
           <div className="flex items-center gap-2">
-            {filters.map((filter, index) => (
-              <Dropdown
-                key={index}
-                items={filter.options}
-                trigger={
-                  <Button variant="outline" size="md" className="gap-2">
-                    {filter.icon && <filter.icon className="h-4 w-4" />}
-                    {!filter.icon && <Filter className="h-4 w-4" />}
-                    <span className="hidden sm:inline">{filter.label}</span>
-                  </Button>
-                }
-              />
-            ))}
+            {filters.map((filter, index) => {
+              const selectedOpt = filter.options?.find((o) => o.value === filter.value);
+              const labelText = selectedOpt && selectedOpt.label && selectedOpt.value !== ""
+                ? `${filter.label}: ${selectedOpt.label}`
+                : filter.label;
+
+              return (
+                <Dropdown
+                  key={index}
+                  items={filter.options.map((opt) => ({
+                    label: opt.label,
+                    icon: opt.icon,
+                    onClick: () => filter.onChange?.(opt.value),
+                  }))}
+                  trigger={
+                    <Button variant="outline" size="md" className="gap-2">
+                      {filter.icon && <filter.icon className="h-4 w-4" />}
+                      {!filter.icon && <Filter className="h-4 w-4" />}
+                      <span className="hidden sm:inline">{labelText}</span>
+                    </Button>
+                  }
+                />
+              );
+            })}
           </div>
         )}
       </div>

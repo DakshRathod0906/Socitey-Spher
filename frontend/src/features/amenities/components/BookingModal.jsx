@@ -62,7 +62,7 @@ export default function BookingModal({ isOpen, onClose, amenity, onSubmit, isSub
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Book ${amenity.name}`}>
+    <Modal open={isOpen} onClose={onClose} title={`Book ${amenity.name}`}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <p className="text-sm text-slate-500 bg-blue-50 p-3 rounded-md mb-4 border border-blue-100">
           <strong>Operating Hours:</strong> {amenity.openTime} - {amenity.closeTime}<br/>

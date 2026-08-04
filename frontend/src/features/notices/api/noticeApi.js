@@ -24,3 +24,8 @@ export const archiveNotice = async (id) => {
   const { data } = await api.put(`/notices/${id}/archive`);
   return data;
 };
+
+export const unarchiveNotice = async (id) => {
+  const { data } = await api.put(`/notices/${id}/unarchive`);
+  return data;
+};

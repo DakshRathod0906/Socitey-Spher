@@ -1,0 +1,180 @@
+================================================================================
+                    SOCIETYSPHER - RECENT UPDATES & TECHNICAL SUMMARY
+================================================================================
+
+1. PORT CONFLICT & DATABASE SYNC FIXES
+--------------------------------------------------------------------------------
+• Port 5000 EADDRINUSE Fix:
+  - Identified and terminated orphaned Node processes occupying Port 5000.
+• MongoDB Database Target Fix:
+  - Updated MONGO_URI in `backend/.env` to include explicit database name `/societysphere`.
+  - Synced user collections across databases so MongoDB Compass and the API server operate on the exact same database.
+• Super Admin Seeding:
+  - Seeded default Super Admin credentials:
+    Email: superadmin@societysphere.com
+    Password: SuperPassword123!
+
+2. SUPER ADMIN SETTINGS FEATURE
+--------------------------------------------------------------------------------
+• Created SuperAdminSettings Component (`frontend/src/features/super-admin/SuperAdminSettings.jsx`):
+  - Platform Config: App Name, Support Email/Phone, Auto-Approve Society, ML Engine Toggle, Maintenance Mode.
+  - Security Policy: Email verification policy, Password strength policy, Token lifetime overview.
+  - Super Admin Profile: Update Name, Email, Phone, and Password.
+  - System Health: Live diagnostic status for MongoDB, Node Express API, and ML Analytics.
+• Registered `/super-admin/settings` route in `frontend/src/App.jsx`.
+• Updated Tabs Component (`frontend/src/components/ui/Tabs.jsx`):
+  - Fixed tab switching bug by supporting both `id` and `value` props.
+
+3. DYNAMIC GLOBAL PLATFORM BRANDING
+--------------------------------------------------------------------------------
+• Created PlatformContext (`frontend/src/contexts/PlatformContext.jsx`):
+  - Retains platform configuration in browser LocalStorage & backend MongoDB.
+  - Exposes `usePlatformSettings()` hook.
+• Linked Dynamic Application Name To:
+  - Sidebar logo text & collapsed logo icon (`frontend/src/components/layout/Sidebar.jsx`).
+  - Authentication Layout headers (`frontend/src/layouts/AuthLayout.jsx`).
+  - Public Landing Page header & footer (`frontend/src/layouts/PublicLayout.jsx`).
+  - Browser document title (`document.title`).
+
+4. SUPER ADMIN PROFILE & PASSWORD MANAGEMENT
+--------------------------------------------------------------------------------
+• Backend Profile Update API:
+  - Created `updateUserProfile` in `backend/services/auth/AuthService.js`.
+  - Added `updateProfile` controller in `backend/controllers/authController.js`.
+  - Added `PUT /api/auth/profile` route in `backend/routes/authRoutes.js`.
+  - Securely verifies current password and hashes new passwords using `bcryptjs`.
+
+5. FORGOT & RESET PASSWORD FLOW
+--------------------------------------------------------------------------------
+• Mongoose Schema Update (`backend/models/User.js`):
+  - Added `resetPasswordToken` and `resetPasswordExpires` fields.
+• Backend Service Logic (`backend/services/auth/AuthService.js`):
+  - `forgotPassword(email)`: Generates a 64-character SHA-256 token (expires in 1 hour) and dispatches an email via Nodemailer.
+  - `resetPassword(token, newPassword)`: Validates token expiration, hashes new password with `bcryptjs`, and updates user account.
+• Backend Routes:
+  - Added `POST /api/auth/forgot-password` and `POST /api/auth/reset-password` in `backend/routes/authRoutes.js`.
+• Frontend Pages:
+  - Created `ForgotPassword.jsx` (`frontend/src/features/auth/ForgotPassword.jsx`).
+  - Created `ResetPassword.jsx` (`frontend/src/features/auth/ResetPassword.jsx`).
+  - Added `/forgot-password` and `/reset-password` routes in `App.jsx`.
+
+6. EMAIL VERIFICATION & IDEMPOTENCY
+--------------------------------------------------------------------------------
+• Fixed Verification Page (`frontend/src/features/auth/VerifyEmail.jsx`):
+  - Added `useRef` guard to prevent React StrictMode duplicate execution.
+• Idempotent Backend Verification (`backend/services/auth/AuthService.js`):
+  - `verifyEmail` preserves token matching for active users, guaranteeing that clicking the link always renders the green "Email Verified" screen.
+• Resend Verification Email Feature:
+  - Added `resendVerificationEmail` (`POST /api/auth/resend-verification`).
+  - Added "Email pending verification — Resend Link" banner on `Login.jsx`.
+
+7. AUTO-APPROVE SOCIETY REGISTRATION SYSTEM
+--------------------------------------------------------------------------------
+• PlatformSetting Mongoose Model (`backend/models/PlatformSetting.js`):
+  - Database schema for global settings (`autoApproveSociety`, `appName`, etc.).
+• Setting Controller & Routes (`backend/controllers/settingController.js`, `backend/routes/settingRoutes.js`):
+  - `GET /api/settings/platform`: Retrieves system config.
+  - `PUT /api/settings/platform`: Updates system config (Super Admin restricted).
+• Automated Approval Logic (`backend/controllers/societyController.js`):
+  - When Auto-Approve is ON: Newly created societies get status `"APPROVED"` automatically, and admin gets `societyId` assigned immediately.
+  - When Auto-Approve is OFF: Standard `"SUBMITTED"` pending review workflow is preserved.
+
+8. SETUP WIZARD & FLAT INVENTORY ARRANGEMENT
+--------------------------------------------------------------------------------
+• Setup Controller Error Handling (`backend/controllers/setupController.js`):
+  - Handled missing society IDs with clear 400 Bad Request error response instead of 404.
+• Flat Inventory Layout (`frontend/src/features/setup/steps/FlatStep.jsx`):
+  - Fixed string sorting issue (`A-1001` before `A-101`).
+  - Implemented natural numerical sorting (Floor 1 -> Floor 2 -> ... -> Floor 10).
+  - Grouped flats into floor-by-floor rows (`Floor 1: A-101, A-102...`).
+  - Added expandable floor card view ("Show All Floors").
+
+9. AMENITIES CATEGORY & FILTERING
+--------------------------------------------------------------------------------
+• Category Badges (`AdminAmenityCard.jsx`, `AmenityCard.jsx`):
+  - Added category badges (Gym, Club House, Swimming Pool, Garden, Community Hall, Indoor Games, Outdoor Sports, Parking, Other) on all amenity cards.
+• Category Filter Pills (`AdminAmenities.jsx`, `MyAmenities.jsx`):
+  - Added interactive category filter pills at the top of Admin & Resident amenity pages so users can filter by category with a single click.
+• UI Select Dropdown Fix (`frontend/src/components/ui/Select.jsx`):
+  - Added `{children}` rendering support inside atomic `<Select>` component so option tags render properly across setup forms.
+
+10. STAFF & GUARDS CREATION FIX
+--------------------------------------------------------------------------------
+• Fixed `POST /api/users 400` Validation Failure:
+  - Resolved missing option values in `StaffFormModal.jsx` caused by `<Select>` dropping JSX children options.
+  - Fixed empty `employeeId` MongoDB index collision where leaving Employee ID blank stored `""` and blocked creating a 2nd staff member.
+  - Made `employeeId` optional in Zod validation schemas (`validation.js` & `StaffStep.jsx`).
+  - Added safety parsing for paginated staff API responses (`res.data.data`).
+
+11. INVITATION ACCEPTANCE FOR EXISTING ACCOUNTS
+--------------------------------------------------------------------------------
+• Existing User Account Link (`AuthService.js`):
+  - Fixed `acceptInvitation` throwing "An account with this email already exists" error when a registered admin or resident accepts an invitation link.
+  - Updated backend logic to seamlessly link resident occupancy to existing user profiles.
+  - Added inline error alerts in `AcceptInvitation.jsx`.
+
+12. ADMIN VISITOR MANAGEMENT PAGE
+--------------------------------------------------------------------------------
+• Feature-Rich Admin Visitor Portal (`frontend/src/features/visitors/Visitors.jsx`):
+  - Added real-time Visitor Metrics cards (Total Visitors, Currently Inside, Expected/Pending, Checked Out).
+  - Built status filter pills (`ALL`, `CHECKED_IN`, `CHECKED_OUT`, `PENDING`, `APPROVED`) and Visitor Type filter dropdowns (`GUEST`, `DELIVERY`, `CAB`, `SERVICE_STAFF`).
+  - Added "Pre-Approve Visitor" modal for society admins to quickly generate visitor passes.
+  - Built "View Pass Details" modal with host resident name, visiting flat, entry/exit timestamps, and vehicle registration number.
+  - Integrated CSV Export for filtered visitor logs.
+
+13. ADMIN HELPDESK & COMPLAINTS MANAGEMENT PAGE
+--------------------------------------------------------------------------------
+• Complete Admin Helpdesk Portal (`frontend/src/features/complaints/Complaints.jsx`):
+  - Added Metrics Bar (Total Tickets, Open/Pending, In Progress, Resolved/Closed).
+  - Built status filter pills (`ALL`, `SUBMITTED`, `IN_PROGRESS`, `RESOLVED`, `REOPEN_REQUESTED`, `REJECTED`) and Category/Priority dropdown filters.
+  - Added "Assign Service Staff" modal to create and dispatch Work Orders to electricians, plumbers, carpenters, etc.
+  - Added "Reject Ticket" modal with required rejection reasons.
+  - Added "Approve Reopen Request" single-click handler.
+  - Added "View Complaint Details" modal with full timeline and resident rating stars.
+  - Integrated CSV Export for helpdesk tickets.
+
+14. BILLING & FINANCIAL COLLECTIONS MODULE UPGRADE
+--------------------------------------------------------------------------------
+• Real Database Integration (`Billing.jsx`, `MyBills.jsx`):
+  - Removed static mock data and connected both Admin (`Billing.jsx`) and Resident (`MyBills.jsx`) pages directly to MongoDB REST API (`GET /api/billing/bills`).
+  - Added Financial Analytics Cards (Total Collected, Pending Dues, Overdue Invoices, Total Generated Invoices).
+  - Built "Generate Monthly Invoices" modal with fee structure breakdown (Maintenance, Water, Security) for bulk billing across all active flats.
+  - Added "Apply Late Fee Penalty" modal (`POST /api/billing/bills/:id/add-late-fee`).
+  - Added "Cancel Invoice" action handler (`PATCH /api/billing/bills/:id/cancel`).
+  - Added "Invoice Breakdown" modal displaying line item fees, subtotal, late fees, and status badges.
+
+15. EXPENSE APPROVAL STATUS INTEGRATION & FIX
+--------------------------------------------------------------------------------
+• Backend Controller & Service Fix (`expenseController.js` & `ExpenseService.js`):
+  - Destructured `status` from `req.body` in `createExpense` so user selection (`APPROVED`, `PENDING`, `REJECTED`) is saved accurately in MongoDB instead of defaulting to `APPROVED`.
+  - Created `updateExpenseStatus` service and mounted `PATCH /api/billing/expenses/:id/status` endpoint.
+• Frontend Table Actions & Modal (`CreateExpenseModal.jsx`, `Expenses.jsx`, `expenseApi.js`):
+  - Added "Approval Status *" dropdown to "Record New Expense" modal.
+  - Added row action dropdowns in `Expenses.jsx` allowing admins to switch expense status between Approved, Pending, and Rejected in real time.
+
+16. EXPENSES FILTERING REFACTORED & FIXED
+--------------------------------------------------------------------------------
+• Interactive Status Pills & Category Dropdown (`Expenses.jsx`):
+  - Fixed filter dropdown issue caused by `FilterBar` missing `onClick` event handlers on raw option items.
+  - Added interactive status pills (`All Statuses`, `Approved`, `Pending`, `Rejected`) and a native `<select>` dropdown for categories (`Maintenance`, `Utilities`, `Salary`, `Security`, etc.).
+  - Integrated both client-side and server-side filtering so filtering updates table rows instantaneously.
+
+================================================================================
+TECHNOLOGIES & LIBRARIES USED
+================================================================================
+Frontend Stack:
+• React 18
+• React Router v6
+• TailwindCSS
+• Lucide React (Icons)
+• Sonner (Toast Notifications)
+• React Hook Form + Zod (Validation)
+• Axios (HTTP Client with Interceptors)
+
+Backend Stack:
+• Node.js & Express.js
+• MongoDB & Mongoose ODM
+• Bcryptjs (Password Hashing)
+• JSON Web Tokens (JWT Authentication)
+• Nodemailer (SMTP Email Services)
+================================================================================

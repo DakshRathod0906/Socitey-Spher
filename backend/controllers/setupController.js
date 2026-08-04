@@ -38,7 +38,10 @@ export const getStatus = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const societyId = req.user.pendingSocietyId || req.user.societyId;
+    const societyId = req.user.societyId || req.user.pendingSocietyId;
+    if (!societyId) {
+      return res.status(400).json({ message: "No society associated with user. Please register a society first." });
+    }
     const society = await SetupService.updateProfile(societyId, req.body);
     res.status(200).json({ message: "Profile updated successfully", progress: society.setupProgress });
   } catch (error) {

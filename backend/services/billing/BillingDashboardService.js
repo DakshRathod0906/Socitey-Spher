@@ -3,22 +3,38 @@ import Payment from "../../models/Payment.js";
 import Expense from "../../models/Expense.js";
 
 export const getDashboardSummary = async (societyId) => {
-  // Aggregate Total Billed
+  // Aggregate Total Billed & Collected from Bills
   const billsAggr = await Bill.aggregate([
     { $match: { societyId, status: { $ne: "CANCELLED" } } },
-    { $group: { _id: null, totalBilled: { $sum: "$totalAmount" }, totalCollected: { $sum: "$amountPaid" } } }
+    {
+      $group: {
+        _id: null,
+        totalBilled: { $sum: "$totalAmount" },
+        totalCollectedFromBills: {
+          $sum: {
+            $cond: [
+              { $eq: ["$status", "PAID"] },
+              { $cond: [{ $gt: ["$amountPaid", 0] }, "$amountPaid", "$totalAmount"] },
+              { $ifNull: ["$amountPaid", 0] }
+            ]
+          }
+        }
+      }
+    }
   ]);
   
   const totalBilled = billsAggr[0]?.totalBilled || 0;
-  const totalCollectedFromBills = billsAggr[0]?.totalCollected || 0;
-  const outstanding = totalBilled - totalCollectedFromBills;
+  const totalCollectedFromBills = billsAggr[0]?.totalCollectedFromBills || 0;
 
   // Actual collected from successful payments
   const paymentsAggr = await Payment.aggregate([
     { $match: { societyId, status: "SUCCESS" } },
     { $group: { _id: null, totalCollected: { $sum: "$amount" } } }
   ]);
-  const totalCollected = paymentsAggr[0]?.totalCollected || 0;
+  const totalCollectedFromPayments = paymentsAggr[0]?.totalCollected || 0;
+
+  const totalCollected = Math.max(totalCollectedFromPayments, totalCollectedFromBills);
+  const outstanding = Math.max(0, totalBilled - totalCollected);
 
   // Overdue count
   const overdueBillsCount = await Bill.countDocuments({

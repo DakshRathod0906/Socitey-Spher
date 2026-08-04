@@ -1,7 +1,7 @@
 import React from "react";
-import { Activity, Clock, Database, CheckCircle, AlertCircle } from "lucide-react";
+import { Activity, Clock, Database, CheckCircle, AlertCircle, Cpu } from "lucide-react";
 
-const PipelineStatus = ({ pipeline }) => {
+const PipelineStatus = ({ pipeline, onTrainML, isTraining }) => {
   if (!pipeline) return null;
 
   const isSuccess = pipeline.status === "SUCCESS";
@@ -10,14 +10,26 @@ const PipelineStatus = ({ pipeline }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
           <Activity className="w-5 h-5 text-indigo-500" />
-          Pipeline Status
+          ML Pipeline Status
         </h2>
-        <div className={`flex items-center gap-1.5 font-medium px-3 py-1 rounded-full bg-gray-50 ${statusColor}`}>
-          <StatusIcon className="w-4 h-4" />
-          <span>{pipeline.status}</span>
+        <div className="flex items-center gap-3">
+          {onTrainML && (
+            <button
+              onClick={onTrainML}
+              disabled={isTraining}
+              className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
+            >
+              <Cpu className={`w-3.5 h-3.5 ${isTraining ? "animate-spin" : ""}`} />
+              <span>{isTraining ? "Training Models..." : "Train ML Models"}</span>
+            </button>
+          )}
+          <div className={`flex items-center gap-1.5 font-medium px-3 py-1 rounded-full bg-gray-50 ${statusColor}`}>
+            <StatusIcon className="w-4 h-4" />
+            <span>{pipeline.status}</span>
+          </div>
         </div>
       </div>
 

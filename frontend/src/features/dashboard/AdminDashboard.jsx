@@ -1,8 +1,9 @@
 import { Users, Shield, MessageSquare, CreditCard, Activity } from "lucide-react";
-import { PageHeader, StatCard, DataTable } from "../../components/shared";
+import { PageHeader, StatCard } from "../../components/shared";
 import { useAdminDashboard } from "./hooks/useDashboard";
 import { LoadingScreen } from "../../components/feedback";
 import QuickAnalyticsCard from "../analytics/components/QuickAnalyticsCard";
+import PredictiveInsightsCard from "../analytics/components/PredictiveInsightsCard";
 
 export default function AdminDashboard() {
   const { data: stats, isLoading, isError } = useAdminDashboard();
@@ -34,9 +35,11 @@ export default function AdminDashboard() {
         <StatCard title="Pending Dues" value={stats?.unpaidBills || 0} icon={CreditCard} />
       </div>
 
+      {/* AI & ML Predictive Insights Card */}
+      <PredictiveInsightsCard />
+
       <div className="grid lg:grid-cols-3 gap-6 mt-8">
         <div className="lg:col-span-2">
-          {/* Note: Activity feed is a placeholder. Future feature: Fetch recent audit logs. */}
           <h2 className="text-lg font-semibold text-text mb-4">Complaint Categories</h2>
           <div className="bg-card rounded-xl border border-border p-5">
             {stats?.complaintsByCategory?.length > 0 ? (

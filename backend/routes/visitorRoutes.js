@@ -28,8 +28,8 @@ router.get("/", authorize("resident", "security", "society_admin", "super_admin"
 // Get today's metrics
 router.get("/today", authorize("security"), getTodayMetrics);
 
-// Resident cancels pass
-router.patch("/:id/cancel", authorize("resident"), cancelVisit);
+// Resident / Security / Admin cancels or expires pass
+router.patch("/:id/cancel", authorize("resident", "security", "society_admin", "super_admin"), cancelVisit);
 
 // Security logs a walk-in gate request
 router.post("/gate-request", authorize("security"), createGateRequest);
@@ -40,10 +40,10 @@ router.patch("/:id/respond", authorize("resident"), respondToGateRequest);
 // Security verifies token
 router.post("/verify", authorize("security"), verifyVisit);
 
-// Security check-in
-router.post("/check-in", authorize("security"), checkIn);
+// Security / Admin check-in
+router.post("/check-in", authorize("security", "society_admin", "super_admin"), checkIn);
 
-// Security check-out
-router.post("/:id/check-out", authorize("security"), checkOut);
+// Security / Admin check-out
+router.post("/:id/check-out", authorize("security", "society_admin", "super_admin"), checkOut);
 
 export default router;

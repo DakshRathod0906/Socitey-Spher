@@ -47,3 +47,13 @@ export const closeComplaint = async (id, { rating, feedback }) => {
   return data.data;
 };
 
+export const resolveComplaint = async (id, remarks) => {
+  const { data } = await api.post(`/complaints/${id}/resolve`, { remarks });
+  return data.data;
+};
+
+export const updateComplaintStatus = async (id, status, remarks) => {
+  const { data } = await api.post(`/complaints/${id}/status`, { status, remarks });
+  return data.data;
+};
+

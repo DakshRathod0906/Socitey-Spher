@@ -20,13 +20,22 @@ def split_and_save(df: pd.DataFrame, target_col: str, collection_name: str, test
         logger.warning(f"No valid rows after dropping missing targets for {collection_name}")
         return
 
-    # First split: train+val and test
-    train_val, test = train_test_split(df, test_size=test_size, random_state=42)
-    
-    # Second split: train and val
-    # calculate the proportion of val in the remaining dataset
-    val_prop = val_size / (1 - test_size)
-    train, val = train_test_split(train_val, test_size=val_prop, random_state=42)
+    # If dataset is too small to split into 3 sets, fallback to using full dataset for all sets
+    if len(df) < 3:
+        logger.warning(f"Small dataset for {collection_name} ({len(df)} rows). Using full dataset for train, val, and test.")
+        train, val, test = df.copy(), df.copy(), df.copy()
+    else:
+        try:
+            # First split: train+val and test
+            train_val, test = train_test_split(df, test_size=test_size, random_state=42)
+            
+            # Second split: train and val
+            # calculate the proportion of val in the remaining dataset
+            val_prop = val_size / (1 - test_size)
+            train, val = train_test_split(train_val, test_size=val_prop, random_state=42)
+        except ValueError as e:
+            logger.warning(f"Could not split dataset {collection_name} with train_test_split: {e}. Falling back to full dataset.")
+            train, val, test = df.copy(), df.copy(), df.copy()
     
     # Save datasets
     train.to_csv(config.TRAINING_DATA_DIR / f"{collection_name}_training.csv", index=False)

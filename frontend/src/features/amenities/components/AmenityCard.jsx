@@ -1,14 +1,22 @@
 import { Card } from "../../../components/ui";
-import { Clock, Users } from "lucide-react";
+import { Clock, Users, Tag } from "lucide-react";
 
 export default function AmenityCard({ amenity, onBookClick }) {
   return (
     <Card className="flex flex-col h-full hover:shadow-md transition-shadow">
       <div className="p-5 flex-1 flex flex-col">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-semibold text-lg text-slate-800">{amenity.name}</h3>
+        <div className="flex justify-between items-start mb-2 gap-2">
+          <div>
+            <h3 className="font-semibold text-lg text-slate-800">{amenity.name}</h3>
+            {amenity.category && (
+              <span className="inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                <Tag className="w-3 h-3 mr-1" />
+                {amenity.category}
+              </span>
+            )}
+          </div>
           {!amenity.isActive && (
-            <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full font-medium">
+            <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full font-medium shrink-0">
               Maintenance
             </span>
           )}

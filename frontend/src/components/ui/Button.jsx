@@ -35,12 +35,15 @@ const Button = forwardRef(
       variant = "primary",
       size = "md",
       loading = false,
+      isLoading = false,
       disabled = false,
       children,
       ...props
     },
     ref
   ) => {
+    const isBtnLoading = loading || isLoading;
+
     return (
       <button
         ref={ref}
@@ -53,10 +56,10 @@ const Button = forwardRef(
           sizes[size],
           className
         )}
-        disabled={disabled || loading}
+        disabled={disabled || isBtnLoading}
         {...props}
       >
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+        {isBtnLoading && <Loader2 className="h-4 w-4 animate-spin" />}
         {children}
       </button>
     );

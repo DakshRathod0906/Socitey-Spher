@@ -13,99 +13,71 @@ export const recordPayment = async ({
   paymentProofUrl,
   recordedBy
 }) => {
-  // Validate payment date
-  const parsedDate = new Date(paymentDate);
+  const parsedDate = new Date(paymentDate || Date.now());
   if (isNaN(parsedDate.getTime())) {
     throw new Error("Invalid payment date");
   }
 
-  // Define allowed payment methods if they are not restricted by enum
-  const allowedMethods = ["UPI", "CREDIT_CARD", "DEBIT_CARD", "NET_BANKING", "CASH", "CHEQUE"];
+  const allowedMethods = ["UPI", "CREDIT_CARD", "DEBIT_CARD", "NET_BANKING", "ONLINE", "CASH", "CHEQUE"];
   if (!allowedMethods.includes(paymentMethod)) {
     throw new Error("Invalid payment method");
   }
 
-  const session = await Payment.startSession();
-  session.startTransaction();
+  const bill = await Bill.findOne({ _id: billId, societyId });
+  if (!bill) throw new Error("Bill not found");
 
-  try {
-    const bill = await Bill.findOne({ _id: billId, societyId })
-      .populate("residentId")
-      .session(session);
-      
-    if (!bill) throw new Error("Bill not found");
-
-    // Validate paidBy matches resident or admin is recording
-    if (paidBy.toString() !== bill.residentId._id.toString() && recordedBy.toString() !== paidBy.toString()) {
-      // If paidBy is different from resident, it should be the admin recording it, but typically paidBy is the resident.
-      // So we'll ensure paidBy is either the resident or we just log who paid.
-      // Assuming paidBy must be the resident of the flat:
-      if (paidBy.toString() !== bill.residentId._id.toString()) {
-         throw new Error("Payment can only be made by the resident of the bill");
-      }
-    }
-
-    if (bill.status === "CANCELLED") {
-      throw new Error("Cannot record payment for a cancelled bill");
-    }
-
-    if (bill.amountPaid >= bill.totalAmount) {
-      throw new Error("Bill is already fully paid");
-    }
-
-    if (bill.amountPaid + amount > bill.totalAmount) {
-      throw new Error(`Overpayment rejected. Remaining balance is ${bill.totalAmount - bill.amountPaid}`);
-    }
-
-    if (amount <= 0) {
-      throw new Error("Payment amount must be greater than zero");
-    }
-
-    // 1. Generate Receipt using atomic counter
-    const receiptNumber = await generateReceiptNumber(societyId, parsedDate, session);
-
-    // 2. Create Payment
-    const payment = new Payment({
-      societyId,
-      flatId: bill.flatId,
-      paidBy,
-      billId,
-      receiptNumber,
-      amount: Math.round(amount * 100) / 100, // round to 2 decimal places
-      paymentMethod,
-      referenceNumber,
-      paymentDate: parsedDate,
-      paymentProofUrl,
-      status: "SUCCESS", // Defaulting to success for manual entry
-      recordedBy
-    });
-
-    await payment.save({ session });
-
-    // 3. Update Bill (Rounding to 2 decimals)
-    bill.amountPaid = Math.round((bill.amountPaid + amount) * 100) / 100;
-    bill.totalAmount = Math.round(bill.totalAmount * 100) / 100;
-
-    if (bill.amountPaid >= bill.totalAmount) {
-      bill.status = "PAID";
-    } else if (bill.amountPaid > 0) {
-      bill.status = "PARTIAL";
-    }
-
-    await bill.save({ session });
-
-    // 4. Audit Log
-    // await AuditLog.create(...)
-
-    await session.commitTransaction();
-    session.endSession();
-
-    return payment;
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    throw error;
+  if (bill.status === "CANCELLED") {
+    throw new Error("Cannot record payment for a cancelled bill");
   }
+
+  if (bill.status === "PAID" || (bill.amountPaid >= bill.totalAmount && bill.totalAmount > 0)) {
+    throw new Error("Bill is already fully paid");
+  }
+
+  const payAmount = amount || bill.totalAmount;
+  if (payAmount <= 0) {
+    throw new Error("Payment amount must be greater than zero");
+  }
+
+  const residentId = bill.residentId?._id || bill.residentId;
+  const actualPaidBy = paidBy || residentId || recordedBy;
+
+  let receiptNumber = `REC-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
+  try {
+    receiptNumber = await generateReceiptNumber(societyId, parsedDate);
+  } catch (err) {
+    console.warn("Receipt generator fallback used:", err.message);
+  }
+
+  const payment = new Payment({
+    societyId,
+    flatId: bill.flatId,
+    paidBy: actualPaidBy,
+    billId: bill._id,
+    receiptNumber,
+    amount: Math.round(payAmount * 100) / 100,
+    paymentMethod: paymentMethod || "UPI",
+    referenceNumber: referenceNumber || `TXN-${Date.now()}`,
+    paymentDate: parsedDate,
+    paymentProofUrl: paymentProofUrl || null,
+    status: "SUCCESS",
+    recordedBy: recordedBy || actualPaidBy
+  });
+
+  await payment.save();
+
+  bill.amountPaid = Math.round(((bill.amountPaid || 0) + payAmount) * 100) / 100;
+  bill.totalAmount = Math.round((bill.totalAmount || 0) * 100) / 100;
+
+  if (bill.amountPaid >= bill.totalAmount) {
+    bill.status = "PAID";
+  } else if (bill.amountPaid > 0) {
+    bill.status = "PARTIAL";
+  }
+
+  await bill.save();
+
+  return payment;
 };
 
 export const getPayments = async ({ societyId, role, residentId, billId, page = 1, limit = 20 }) => {

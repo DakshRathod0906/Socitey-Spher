@@ -2,12 +2,14 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { useAuth } from "../../contexts/AuthContext";
+import { usePlatformSettings } from "../../contexts/PlatformContext";
 import { NAVIGATION_CONFIG } from "../../app/navigation";
 import { ChevronLeft, ChevronRight, LogOut, Menu } from "lucide-react";
 import { Tooltip } from "../ui";
 
 export default function Sidebar({ mobileOpen, setMobileOpen }) {
   const { user, logout } = useAuth();
+  const { platformConfig } = usePlatformSettings();
   const [collapsed, setCollapsed] = useState(false);
 
   // Fallback to resident if no role is provided (for development purposes)
@@ -20,11 +22,13 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
       <div className="flex h-16 shrink-0 items-center justify-between px-4 border-b border-border">
         {!collapsed && (
           <span className="text-xl font-bold text-primary truncate">
-            SocietySphere
+            {platformConfig.appName}
           </span>
         )}
         {collapsed && (
-          <span className="text-xl font-bold text-primary mx-auto">S</span>
+          <span className="text-xl font-bold text-primary mx-auto">
+            {platformConfig.appName?.charAt(0) || "S"}
+          </span>
         )}
         
         {/* Desktop Collapse Toggle */}

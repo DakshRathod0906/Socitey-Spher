@@ -3,7 +3,7 @@ import { cn } from "../../lib/utils";
 import { ChevronDown } from "lucide-react";
 
 const Select = forwardRef(
-  ({ className, label, error, hint, options = [], placeholder, ...props }, ref) => {
+  ({ className, label, error, hint, options = [], placeholder, children, ...props }, ref) => {
     return (
       <div className="space-y-1.5">
         {label && <label className="label block">{label}</label>}
@@ -25,11 +25,13 @@ const Select = forwardRef(
                 {placeholder}
               </option>
             )}
-            {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
+            {options.length > 0
+              ? options.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))
+              : children}
           </select>
           <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted pointer-events-none" />
         </div>

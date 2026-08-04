@@ -16,9 +16,20 @@ export default function MyParking() {
 
   if (slotsLoading || vehiclesLoading) return <LoadingScreen message="Loading parking data..." />;
 
-  // Filter slots for the current resident
-  const mySlots = slots?.filter(s => s.allocatedTo?._id === user._id) || [];
-  const myVehicles = vehicles?.filter(v => v.ownerUserId?._id === user._id) || [];
+  const currentUserId = user?._id || user?.id;
+
+  const slotsList = Array.isArray(slots) ? slots : (slots?.data || []);
+  const vehiclesList = Array.isArray(vehicles) ? vehicles : (vehicles?.data || []);
+
+  const mySlots = slotsList.filter((s) => {
+    const allocatedId = typeof s.allocatedTo === "object" ? s.allocatedTo?._id : s.allocatedTo;
+    return allocatedId && allocatedId.toString() === currentUserId?.toString();
+  });
+
+  const myVehicles = vehiclesList.filter((v) => {
+    const ownerId = typeof v.ownerUserId === "object" ? v.ownerUserId?._id : v.ownerUserId;
+    return ownerId && ownerId.toString() === currentUserId?.toString();
+  });
 
   return (
     <div className="animate-fade-in space-y-6">

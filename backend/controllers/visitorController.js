@@ -62,13 +62,18 @@ export const getTodayMetrics = async (req, res, next) => {
 // @route  GET /api/visits
 export const getVisits = async (req, res, next) => {
   try {
+    const { status, type, search } = req.query;
     const filters = {};
+
     if (req.user.role === "resident") {
       filters.residentUserId = req.user._id;
     }
-    // Security/Admin sees all (can pass filters via req.query later)
-    
-    const visits = await visitorService.getVisits(req.societyId, filters);
+
+    if (status && status !== "ALL") {
+      filters.status = status;
+    }
+
+    const visits = await visitorService.getVisits(req.societyId, filters, { search, type });
     res.json(visits);
   } catch (err) {
     next(err);

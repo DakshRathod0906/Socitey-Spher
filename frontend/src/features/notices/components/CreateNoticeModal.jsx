@@ -147,13 +147,14 @@ export default function CreateNoticeModal({ open, onClose, initialValues }) {
             <label className="text-sm font-medium text-text mb-2 block">Priority</label>
             <select
               className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow disabled:opacity-50"
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
+              value={priority.toUpperCase()}
+              onChange={(e) => setPriority(e.target.value.toUpperCase())}
               disabled={isPending}
             >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="URGENT">Urgent</option>
             </select>
           </div>
         </div>

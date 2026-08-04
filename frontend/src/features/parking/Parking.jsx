@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Plus, Edit, ToggleLeft, ToggleRight } from "lucide-react";
+import { Plus, Edit, ToggleLeft, ToggleRight, UserX, Trash2 } from "lucide-react";
 import { PageHeader, DataTable, FilterBar } from "../../components/shared";
 import { Badge, Dropdown, Button } from "../../components/ui";
 import { LoadingScreen } from "../../components/feedback";
-import { useParkingSlots, useUpdateOccupancy } from "./hooks/useParking";
+import { useParkingSlots, useUpdateOccupancy, useUnassignSlot, useDeleteSlot } from "./hooks/useParking";
 import AssignParkingModal from "./components/AssignParkingModal";
 import CreateSlotModal from "./components/CreateSlotModal";
 
@@ -15,6 +15,8 @@ export default function Parking() {
   
   const { data: slots, isLoading, isError } = useParkingSlots();
   const { mutate: updateOccupancy } = useUpdateOccupancy();
+  const { mutate: unassignSlot } = useUnassignSlot();
+  const { mutate: deleteSlot } = useDeleteSlot();
 
   if (isLoading) return <LoadingScreen message="Loading parking slots..." />;
   if (isError) return <div className="p-8 text-center bg-danger-light text-danger rounded-xl">Failed to load parking slots.</div>;
@@ -27,11 +29,21 @@ export default function Parking() {
 
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
-    filteredSlots = filteredSlots.filter(s => 
-      s.slotNumber.toLowerCase().includes(q) || 
-      s.allocatedTo?.flatId?.flatNumber?.toLowerCase().includes(q) ||
-      s.vehicleId?.licensePlate?.toLowerCase().includes(q)
-    );
+    filteredSlots = filteredSlots.filter(s => {
+      const slotNum = s.slotNumber ? String(s.slotNumber).toLowerCase() : "";
+      const residentName = s.allocatedTo?.name ? String(s.allocatedTo.name).toLowerCase() : "";
+      const flatNum = s.allocatedTo?.flatId?.flatNumber ? String(s.allocatedTo.flatId.flatNumber).toLowerCase() : "";
+      const license = s.vehicleId?.licensePlate ? String(s.vehicleId.licensePlate).toLowerCase() : "";
+      const type = s.slotType ? String(s.slotType).toLowerCase() : "";
+
+      return (
+        slotNum.includes(q) ||
+        residentName.includes(q) ||
+        flatNum.includes(q) ||
+        license.includes(q) ||
+        type.includes(q)
+      );
+    });
   }
 
   // Metrics
@@ -40,13 +52,19 @@ export default function Parking() {
   const available = slots?.filter(s => s.status === "AVAILABLE").length || 0;
   const occupied = slots?.filter(s => s.isOccupied).length || 0;
 
+  const handleDeleteSlot = (slot) => {
+    if (window.confirm(`Are you sure you want to delete parking slot "${slot.slotNumber}"?`)) {
+      deleteSlot(slot._id);
+    }
+  };
+
   const columns = [
     { header: "Spot No.", accessor: "slotNumber", sortable: true, cell: (row) => <span className="font-medium">{row.slotNumber}</span> },
     { 
-      header: "Allotted To (Flat)", 
+      header: "Allotted To", 
       accessor: "allocatedTo", 
       sortable: true,
-      cell: (row) => row.allocatedTo ? `${row.allocatedTo.name} (${row.allocatedTo.flatId?.flatNumber || 'N/A'})` : "-" 
+      cell: (row) => row.allocatedTo ? row.allocatedTo.name : "-" 
     },
     { 
       header: "Vehicle No.", 
@@ -80,26 +98,41 @@ export default function Parking() {
       header: "Actions",
       accessor: "actions",
       align: "right",
-      cell: (row) => (
-        <Dropdown 
-          align="right"
-          items={[
-            { 
-              label: row.status === "AVAILABLE" ? "Assign Spot" : "Edit Allocation", 
-              icon: Edit, 
-              onClick: () => setAssignSlot(row) 
-            },
-            {
-              label: row.isOccupied ? "Mark Empty" : "Mark Occupied",
-              icon: row.isOccupied ? ToggleLeft : ToggleRight,
-              onClick: () => updateOccupancy({ slotId: row._id, isOccupied: !row.isOccupied })
-            }
-          ]}
-          trigger={
-            <Button variant="outline" size="sm">Manage</Button>
+      cell: (row) => {
+        const dropdownItems = [
+          { 
+            label: row.status === "AVAILABLE" ? "Assign Spot" : "Edit Allocation", 
+            icon: Edit, 
+            onClick: () => setAssignSlot(row) 
+          },
+          ...(row.status === "ALLOCATED" ? [{
+            label: "Unassign Spot",
+            icon: UserX,
+            onClick: () => unassignSlot(row._id)
+          }] : []),
+          {
+            label: row.isOccupied ? "Mark Empty" : "Mark Occupied",
+            icon: row.isOccupied ? ToggleLeft : ToggleRight,
+            onClick: () => updateOccupancy({ slotId: row._id, isOccupied: !row.isOccupied })
+          },
+          {
+            label: "Delete Spot",
+            icon: Trash2,
+            danger: true,
+            onClick: () => handleDeleteSlot(row)
           }
-        />
-      )
+        ];
+
+        return (
+          <Dropdown 
+            align="right"
+            items={dropdownItems}
+            trigger={
+              <Button variant="outline" size="sm">Manage</Button>
+            }
+          />
+        );
+      }
     }
   ];
 

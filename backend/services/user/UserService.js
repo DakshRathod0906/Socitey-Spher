@@ -177,13 +177,16 @@ export const createUser = async (societyId, userData) => {
     throw error;
   }
 
-  if (userData.employeeId) {
+  if (userData.employeeId && userData.employeeId.trim()) {
+    userData.employeeId = userData.employeeId.trim();
     const existingEmp = await User.findOne({ societyId, employeeId: userData.employeeId });
     if (existingEmp) {
       const error = new Error("Employee ID is already in use within this society.");
       error.status = 400;
       throw error;
     }
+  } else {
+    delete userData.employeeId;
   }
 
   const user = new User({

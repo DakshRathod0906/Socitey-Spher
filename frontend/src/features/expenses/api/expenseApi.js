@@ -14,3 +14,8 @@ export const createExpense = async (expenseData) => {
   const { data } = await api.post("/billing/expenses", expenseData);
   return data.data;
 };
+
+export const updateExpenseStatus = async (id, status) => {
+  const { data } = await api.patch(`/billing/expenses/${id}/status`, { status });
+  return data.data;
+};

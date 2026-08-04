@@ -37,7 +37,11 @@ export const addVehicle = async (societyId, ownerUserId, data) => {
 };
 
 export const getVehiclesByUser = async (societyId, ownerUserId) => {
-  return await Vehicle.find({ societyId, ownerUserId, status: "ACTIVE" });
+  const query = { societyId, status: "ACTIVE" };
+  if (ownerUserId) {
+    query.ownerUserId = ownerUserId;
+  }
+  return await Vehicle.find(query).populate("ownerUserId", "name email phone");
 };
 
 export const updateVehicleStatus = async (societyId, vehicleId, status) => {

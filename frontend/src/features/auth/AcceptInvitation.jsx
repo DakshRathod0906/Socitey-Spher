@@ -23,6 +23,8 @@ export default function AcceptInvitation() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const [apiError, setApiError] = useState("");
+
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(acceptSchema),
   });
@@ -30,16 +32,19 @@ export default function AcceptInvitation() {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      await api.post("/auth/accept-invitation", {
+      setApiError("");
+      const res = await api.post("/auth/accept-invitation", {
         token,
         name: data.name,
         phone: data.phone,
         password: data.password
       });
-      toast.success("Account created successfully!");
+      toast.success(res.data?.message || "Invitation accepted successfully!");
       navigate("/login");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to accept invitation");
+      const msg = error.response?.data?.message || error.message || "Failed to accept invitation";
+      setApiError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -65,6 +70,11 @@ export default function AcceptInvitation() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {apiError && (
+            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-md border border-red-200">
+              {apiError}
+            </div>
+          )}
           <Input 
             label="Full Name" 
             error={errors.name?.message} 

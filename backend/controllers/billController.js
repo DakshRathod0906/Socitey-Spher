@@ -13,9 +13,9 @@ export const generateBills = async (req, res, next) => {
       items,
       generatedBy: req.user._id
     });
-    res.status(201).json({ success: true, data: result });
+    res.status(201).json({ success: true, message: `Successfully generated ${result.count} maintenance invoices!`, data: result });
   } catch (err) {
-    next(err);
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 };
 
@@ -24,12 +24,10 @@ export const listBills = async (req, res, next) => {
     const { status, flatId, page, limit } = req.query;
     const result = await BillService.getBills({
       societyId: req.societyId,
-      role: req.user.role,
-      residentId: req.user._id,
       status,
       flatId,
-      page: parseInt(page),
-      limit: parseInt(limit)
+      page: parseInt(page) || 1,
+      limit: parseInt(limit) || 10
     });
     res.json({ success: true, data: result });
   } catch (err) {
@@ -37,10 +35,26 @@ export const listBills = async (req, res, next) => {
   }
 };
 
-export const getBillDetails = async (req, res, next) => {
+export const getBillById = async (req, res, next) => {
   try {
-    const result = await BillService.getBillDetails(req.params.id, req.societyId, req.user._id, req.user.role);
-    res.json({ success: true, data: result });
+    const bill = await BillService.getBillById(req.params.id, req.societyId);
+    res.json({ success: true, data: bill });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getBillDetails = getBillById;
+
+export const addLateFee = async (req, res, next) => {
+  try {
+    const rawAmount = req.body.feeAmount ?? req.body.lateFeeAmount;
+    const feeAmount = parseFloat(rawAmount);
+    if (isNaN(feeAmount) || feeAmount <= 0) {
+      return res.status(400).json({ message: "Please provide a valid positive late fee amount" });
+    }
+    const bill = await BillService.addLateFee(req.params.id, req.societyId, req.user?._id, feeAmount);
+    res.json({ success: true, data: bill });
   } catch (err) {
     next(err);
   }
@@ -48,18 +62,8 @@ export const getBillDetails = async (req, res, next) => {
 
 export const cancelBill = async (req, res, next) => {
   try {
-    const result = await BillService.cancelBill(req.params.id, req.societyId, req.user._id);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const addLateFee = async (req, res, next) => {
-  try {
-    const { feeAmount } = req.body;
-    const result = await BillService.addLateFee(req.params.id, req.societyId, req.user._id, feeAmount);
-    res.json({ success: true, data: result });
+    const bill = await BillService.cancelBill(req.params.id, req.societyId, req.user?._id);
+    res.json({ success: true, data: bill });
   } catch (err) {
     next(err);
   }
@@ -67,8 +71,8 @@ export const addLateFee = async (req, res, next) => {
 
 export const getDashboardSummary = async (req, res, next) => {
   try {
-    const result = await BillingDashboardService.getDashboardSummary(req.societyId);
-    res.json({ success: true, data: result });
+    const summary = await BillingDashboardService.getDashboardSummary(req.societyId);
+    res.json({ success: true, data: summary });
   } catch (err) {
     next(err);
   }

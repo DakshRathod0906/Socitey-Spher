@@ -29,13 +29,17 @@ export default function StaffManagement() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [viewStaff, setViewStaff] = useState(null); // For drawer
 
+  const [formError, setFormError] = useState("");
+
   const handleOpenCreate = () => {
     setSelectedStaff(null);
+    setFormError("");
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (staffMember) => {
     setSelectedStaff(staffMember);
+    setFormError("");
     setIsModalOpen(true);
   };
 
@@ -54,13 +58,16 @@ export default function StaffManagement() {
   };
 
   const handleFormSubmit = (data) => {
+    setFormError("");
     if (selectedStaff) {
       updateStaff({ id: selectedStaff._id, data }, {
-        onSuccess: () => setIsModalOpen(false)
+        onSuccess: () => setIsModalOpen(false),
+        onError: (err) => setFormError(err.response?.data?.message || "Failed to update staff")
       });
     } else {
       createStaff(data, {
-        onSuccess: () => setIsModalOpen(false)
+        onSuccess: () => setIsModalOpen(false),
+        onError: (err) => setFormError(err.response?.data?.message || "Failed to create staff")
       });
     }
   };
@@ -100,6 +107,7 @@ export default function StaffManagement() {
           staff={selectedStaff}
           onSubmit={handleFormSubmit}
           isSubmitting={isCreating || isUpdating}
+          apiError={formError}
         />
       )}
 

@@ -5,7 +5,7 @@ const complaintSchema = new mongoose.Schema(
   {
     societyId: { type: mongoose.Schema.Types.ObjectId, ref: "Society", required: true },
     residentId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    flatId: { type: mongoose.Schema.Types.ObjectId, ref: "Flat", required: true },
+    flatId: { type: mongoose.Schema.Types.ObjectId, ref: "Flat", required: false },
 
     // Human-readable tracking number (CMP-2026-000123)
     complaintNumber: { type: String, required: true },

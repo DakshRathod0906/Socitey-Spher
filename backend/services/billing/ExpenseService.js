@@ -1,6 +1,6 @@
 import Expense from "../../models/Expense.js";
 
-export const createExpense = async ({ societyId, title, category, amount, expenseDate, vendorName, receiptUrl, recordedBy }) => {
+export const createExpense = async ({ societyId, title, category, amount, expenseDate, vendorName, receiptUrl, status, recordedBy }) => {
   const expense = new Expense({
     societyId,
     title,
@@ -10,9 +10,17 @@ export const createExpense = async ({ societyId, title, category, amount, expens
     vendorName,
     receiptUrl,
     recordedBy,
-    status: "APPROVED" // Assuming direct approval by admin for now
+    status: status || "APPROVED",
   });
 
+  await expense.save();
+  return expense;
+};
+
+export const updateExpenseStatus = async (expenseId, societyId, status) => {
+  const expense = await Expense.findOne({ _id: expenseId, societyId });
+  if (!expense) throw new Error("Expense not found");
+  expense.status = status;
   await expense.save();
   return expense;
 };

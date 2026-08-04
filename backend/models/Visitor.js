@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const visitorSchema = new mongoose.Schema(
   {
     societyId: { type: mongoose.Schema.Types.ObjectId, ref: "Society", required: true },
-    name: { type: String, required: true },
+    name: { type: String, required: true, trim: true, minlength: 2, maxlength: 100 },
     phone: { type: String }, // Optional, not unique at DB level
     email: { type: String },
     photo: { type: String },

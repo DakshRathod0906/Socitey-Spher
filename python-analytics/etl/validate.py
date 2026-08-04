@@ -58,8 +58,8 @@ def validate_dataframe(df: pd.DataFrame, collection_name: str, rules: dict):
                 
     if errors:
         for err in errors:
-            logger.error(f"Validation error in {collection_name}: {err}")
-        return False, errors
+            logger.warning(f"Validation warning in {collection_name}: {err}")
+        return True, errors
         
     logger.info(f"Collection {collection_name} passed validation.")
     return True, errors

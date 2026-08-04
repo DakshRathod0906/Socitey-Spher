@@ -96,3 +96,51 @@ export const acceptInvitation = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updateProfile = async (req, res, next) => {
+  try {
+    const result = await authService.updateUserProfile(req.user._id, req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const result = await authService.forgotPassword(req.body.email);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token, newPassword } = req.body;
+    const result = await authService.resetPassword(token, newPassword);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resendVerification = async (req, res, next) => {
+  try {
+    const result = await authService.resendVerificationEmail(req.body.email);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const result = await authService.changePassword(req.user._id, currentPassword, newPassword);
+    res.json(result);
+  } catch (err) {
+    if (err.message.includes("incorrect")) res.status(400);
+    next(err);
+  }
+};

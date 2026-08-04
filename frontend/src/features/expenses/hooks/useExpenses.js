@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getExpenses, getExpense, createExpense } from "../api/expenseApi";
+import { getExpenses, getExpense, createExpense, updateExpenseStatus } from "../api/expenseApi";
 import { toast } from "sonner";
 
 export const useExpenses = (filters) => {
@@ -27,6 +27,20 @@ export const useCreateExpense = () => {
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || "Failed to record expense");
+    },
+  });
+};
+
+export const useUpdateExpenseStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }) => updateExpenseStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      toast.success("Expense status updated");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to update expense status");
     },
   });
 };

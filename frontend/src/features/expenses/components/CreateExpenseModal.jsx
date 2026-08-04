@@ -6,6 +6,12 @@ const CATEGORIES = [
   "EVENT", "ADMINISTRATION", "REPAIR", "OTHER"
 ];
 
+const STATUS_OPTIONS = [
+  { label: "Approved", value: "APPROVED" },
+  { label: "Pending Approval", value: "PENDING" },
+  { label: "Rejected", value: "REJECTED" },
+];
+
 export default function CreateExpenseModal({ isOpen, onClose, onSubmit, isSubmitting }) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("MAINTENANCE");
@@ -13,6 +19,7 @@ export default function CreateExpenseModal({ isOpen, onClose, onSubmit, isSubmit
   const [expenseDate, setExpenseDate] = useState("");
   const [vendorName, setVendorName] = useState("");
   const [receiptUrl, setReceiptUrl] = useState("");
+  const [status, setStatus] = useState("APPROVED");
   const [error, setError] = useState("");
 
   const validate = () => {
@@ -22,7 +29,6 @@ export default function CreateExpenseModal({ isOpen, onClose, onSubmit, isSubmit
     
     const selectedDate = new Date(expenseDate);
     const today = new Date();
-    // Allow today but not future
     if (selectedDate > today) return "Expense Date cannot be in the future.";
 
     if (receiptUrl && !receiptUrl.startsWith("http")) return "Receipt URL must be a valid http(s) link.";
@@ -45,10 +51,9 @@ export default function CreateExpenseModal({ isOpen, onClose, onSubmit, isSubmit
       expenseDate,
       vendorName: vendorName.trim() || undefined,
       receiptUrl: receiptUrl.trim() || undefined,
+      status,
     });
   };
-
-  // Reset form when closed/opened could be done via key or useEffect, but usually we just reset on success.
 
   return (
     <Modal
@@ -110,13 +115,28 @@ export default function CreateExpenseModal({ isOpen, onClose, onSubmit, isSubmit
             required
           />
 
-          <Input 
-            label="Vendor Name" 
-            placeholder="e.g., Otis Elevators"
-            value={vendorName}
-            onChange={(e) => setVendorName(e.target.value)}
-          />
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-text">Approval Status *</label>
+            <Select 
+              value={status} 
+              onChange={(e) => setStatus(e.target.value)}
+              required
+            >
+              {STATUS_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </Select>
+          </div>
         </div>
+
+        <Input 
+          label="Vendor Name" 
+          placeholder="e.g., Otis Elevators"
+          value={vendorName}
+          onChange={(e) => setVendorName(e.target.value)}
+        />
 
         <Input 
           label="Receipt URL" 

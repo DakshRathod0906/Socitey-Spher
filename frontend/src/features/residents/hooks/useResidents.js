@@ -16,7 +16,7 @@ export const useResidents = (filters = {}) => {
   });
 
   return {
-    data: data?.data || [],
+    data: Array.isArray(data) ? data : (data?.data || []),
     meta: data?.meta || null,
     isLoading,
     isError,
@@ -31,7 +31,7 @@ export const useUsers = (filters = { status: "ACTIVE" }) => {
   });
 
   return {
-    data: data || [],
+    data: Array.isArray(data) ? data : (data?.data || []),
     isLoading,
     isError,
     refetch,

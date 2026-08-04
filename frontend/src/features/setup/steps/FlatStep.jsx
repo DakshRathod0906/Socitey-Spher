@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { Button } from "../../../components/ui";
+import { Button, Badge } from "../../../components/ui";
 import api from "../../../services/api";
 import { toast } from "sonner";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Building2, ChevronDown, ChevronUp, Layers } from "lucide-react";
 
 export default function FlatStep({ save, saving, previous }) {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [flats, setFlats] = useState([]);
+  const [expandedTowers, setExpandedTowers] = useState({});
 
   const fetchFlats = async () => {
     try {
@@ -28,7 +29,7 @@ export default function FlatStep({ save, saving, previous }) {
   const handleGenerate = async () => {
     try {
       setGenerating(true);
-      await api.post("/setup/flats"); // Generates flats backend side
+      await api.post("/setup/flats");
       toast.success("Flats generated successfully!");
       await fetchFlats();
     } catch (error) {
@@ -43,81 +44,152 @@ export default function FlatStep({ save, saving, previous }) {
       toast.error("Please generate flats before proceeding.");
       return;
     }
-    // We already saved/generated them. We can just call save with dummy payload to advance progress, 
-    // but progress is already updated on backend by the generate endpoint.
-    // Instead of dummy payload, we use `save` which triggers the state machine.
-    // Actually our /setup/flats post endpoint does the marking. We'll just call `next` if we had access to it.
-    // Let's modify the way save works, or just hit an endpoint to proceed. 
-    // Since we called generate via API already, the backend marked flats as completed.
-    // So we can just proceed. However, the requirement is to use `save` from hook.
-    // Let's create an empty POST or just trigger a refetch of status and advance.
     save(() => Promise.resolve({ progress: { flats: true }, message: "Proceeding" }), {});
   };
 
-  // Group flats by tower name
-  const groupedFlats = flats.reduce((acc, flat) => {
+  const toggleExpandTower = (tName) => {
+    setExpandedTowers((prev) => ({
+      ...prev,
+      [tName]: !prev[tName],
+    }));
+  };
+
+  // Sort flats numerically by floor, then flat number
+  const sortedFlats = [...flats].sort((a, b) => {
+    if (a.floor !== b.floor) return a.floor - b.floor;
+    return a.flatNumber.localeCompare(b.flatNumber, undefined, { numeric: true });
+  });
+
+  // Group by Tower -> Floor
+  const groupedByTowerAndFloor = sortedFlats.reduce((acc, flat) => {
     const tName = flat.towerId?.name || "Unknown";
-    if (!acc[tName]) acc[tName] = [];
-    acc[tName].push(flat);
+    const floorNum = flat.floor || 1;
+    if (!acc[tName]) acc[tName] = {};
+    if (!acc[tName][floorNum]) acc[tName][floorNum] = [];
+    acc[tName][floorNum].push(flat);
     return acc;
   }, {});
 
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-text">Generate Flats</h2>
+        <h2 className="text-xl font-bold text-text">Generate Flats Inventory</h2>
         <p className="text-muted text-sm mt-1">
-          Automatically generate all flats based on your tower dimensions.
+          Automatically generate structured flat inventory organized by tower and floor numbers.
         </p>
       </div>
 
-      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6 flex items-start gap-4">
+      <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-6 flex items-start gap-3">
         <AlertCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-        <div className="text-sm text-text">
-          <p className="font-medium text-primary mb-1">Important Note</p>
-          <p>
-            Generating flats will create the entire inventory for your society. If you change tower configurations later and regenerate, any unassigned auto-generated flats will be replaced.
+        <div className="text-xs text-text">
+          <p className="font-semibold text-primary mb-0.5">Important Note</p>
+          <p className="text-muted">
+            Generating flats creates the complete inventory for your society. If you modify tower configurations later and regenerate, any unassigned auto-generated flats will be updated.
           </p>
         </div>
       </div>
 
-      <div className="flex justify-center py-6">
-        <Button 
-          size="lg" 
-          onClick={handleGenerate} 
+      <div className="flex justify-center py-4">
+        <Button
+          size="lg"
+          onClick={handleGenerate}
           loading={generating}
           disabled={loading || saving}
         >
-          {flats.length > 0 ? "Regenerate Flats" : "Generate Flats Now"}
+          {flats.length > 0 ? "Regenerate Inventory" : "Generate Inventory Now"}
         </Button>
       </div>
 
       {!loading && flats.length > 0 && (
-        <div className="mt-8 space-y-8">
-          <h3 className="font-semibold text-lg border-b border-border pb-2">Preview</h3>
-          {Object.entries(groupedFlats).map(([towerName, towerFlats]) => (
-            <div key={towerName}>
-              <h4 className="font-medium text-text mb-3">Tower {towerName}</h4>
-              <div className="flex flex-wrap gap-2">
-                {towerFlats.slice(0, 15).map(f => (
-                  <div key={f._id} className="px-3 py-1.5 bg-surface border border-border rounded text-sm text-text">
-                    {f.flatNumber}
+        <div className="mt-8 space-y-6">
+          <div className="flex items-center justify-between border-b border-border pb-3">
+            <h3 className="font-semibold text-base text-text flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-primary" />
+              Flats Overview & Layout ({flats.length} Total Flats)
+            </h3>
+          </div>
+
+          {Object.entries(groupedByTowerAndFloor).map(([towerName, floorMap]) => {
+            const floorNumbers = Object.keys(floorMap).map(Number).sort((a, b) => a - b);
+            const totalFlatsInTower = Object.values(floorMap).reduce((sum, list) => sum + list.length, 0);
+            const isExpanded = expandedTowers[towerName];
+            const displayedFloors = isExpanded ? floorNumbers : floorNumbers.slice(0, 3);
+
+            return (
+              <div key={towerName} className="bg-surface border border-border rounded-xl p-5 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                      {towerName.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-text text-base">Tower {towerName}</h4>
+                      <p className="text-xs text-muted">
+                        {floorNumbers.length} Floors • {totalFlatsInTower} Total Flats
+                      </p>
+                    </div>
                   </div>
-                ))}
-                {towerFlats.length > 15 && (
-                  <div className="px-3 py-1.5 bg-surface/50 border border-border border-dashed rounded text-sm text-muted italic">
-                    + {towerFlats.length - 15} more
+                  <Badge variant="primary" size="sm">
+                    {totalFlatsInTower} Units
+                  </Badge>
+                </div>
+
+                {/* Floor Rows */}
+                <div className="space-y-3 pt-2">
+                  {displayedFloors.map((floorNum) => (
+                    <div key={floorNum} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 bg-background/50 border border-border/60 rounded-lg">
+                      <div className="flex items-center gap-2 w-28 shrink-0">
+                        <Layers className="w-3.5 h-3.5 text-muted" />
+                        <span className="text-xs font-semibold text-text">Floor {floorNum}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 flex-1">
+                        {floorMap[floorNum].map((flat) => (
+                          <span
+                            key={flat._id}
+                            className="px-2.5 py-1 bg-surface border border-border rounded-md text-xs font-medium text-text shadow-2xs hover:border-primary/40 transition-colors"
+                          >
+                            {flat.flatNumber}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {floorNumbers.length > 3 && (
+                  <div className="pt-1 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => toggleExpandTower(towerName)}
+                      className="text-xs font-medium text-primary hover:text-primary-dark flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      {isExpanded ? (
+                        <>
+                          <ChevronUp className="w-3.5 h-3.5" />
+                          Show Less Floors
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="w-3.5 h-3.5" />
+                          Show All {floorNumbers.length} Floors ({floorNumbers.length - 3} More Floors)
+                        </>
+                      )}
+                    </button>
                   </div>
                 )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      <div className="pt-8 flex justify-between mt-auto">
-        <Button variant="outline" onClick={previous} disabled={saving || generating}>Back</Button>
-        <Button onClick={handleNext} disabled={flats.length === 0 || saving || generating}>Continue</Button>
+      <div className="pt-8 flex justify-between mt-auto border-t border-border mt-8">
+        <Button variant="outline" onClick={previous} disabled={saving || generating}>
+          Back
+        </Button>
+        <Button onClick={handleNext} disabled={flats.length === 0 || saving || generating}>
+          Continue
+        </Button>
       </div>
     </div>
   );

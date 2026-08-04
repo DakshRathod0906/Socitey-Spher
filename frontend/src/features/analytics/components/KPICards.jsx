@@ -20,28 +20,28 @@ const KPICards = ({ dashboard }) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
       <KPICard
         title="Total Complaints"
-        value={dashboard.total_complaints || 0}
+        value={dashboard?.complaints?.total ?? dashboard?.total_complaints ?? 0}
         icon={MessageSquare}
         colorClass="text-red-600"
         bgColorClass="bg-red-50"
       />
       <KPICard
         title="Total Expenses"
-        value={`₹${(dashboard.total_expenses || 0).toLocaleString()}`}
+        value={`₹${(dashboard?.billing?.total_amount ?? dashboard?.total_expenses ?? 0).toLocaleString()}`}
         icon={IndianRupee}
         colorClass="text-emerald-600"
         bgColorClass="bg-emerald-50"
       />
       <KPICard
         title="Total Visitors"
-        value={dashboard.total_visitors || 0}
+        value={dashboard?.visitors?.total ?? dashboard?.total_visitors ?? 0}
         icon={Users}
         colorClass="text-blue-600"
         bgColorClass="bg-blue-50"
       />
       <KPICard
-        title="Total Vehicles"
-        value={dashboard.total_vehicles || 0}
+        title="Total Users / Vehicles"
+        value={dashboard?.users?.total ?? dashboard?.total_vehicles ?? 0}
         icon={Car}
         colorClass="text-indigo-600"
         bgColorClass="bg-indigo-50"

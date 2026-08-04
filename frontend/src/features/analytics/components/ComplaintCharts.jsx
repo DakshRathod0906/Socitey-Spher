@@ -7,21 +7,34 @@ import {
 import { assignStatusColors, assignColors } from "../utils/chartTransformers";
 import { CHART_COLORS } from "../constants/chartColors";
 
-const ChartContainer = ({ title, children }) => (
+import { Inbox } from "lucide-react";
+
+const EmptyChartState = ({ message = "No records logged yet" }) => (
+  <div className="flex flex-col items-center justify-center h-full text-gray-400">
+    <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mb-2">
+      <Inbox className="w-6 h-6 text-gray-300" />
+    </div>
+    <p className="text-sm font-medium text-gray-500">{message}</p>
+    <p className="text-xs text-gray-400 mt-1">0 records found in database</p>
+  </div>
+);
+
+const ChartContainer = ({ title, children, hasData = true, emptyMessage }) => (
   <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-96">
     <h3 className="text-lg font-semibold text-gray-800 mb-6">{title}</h3>
     <div className="flex-1 w-full h-full min-h-0">
-      {children}
+      {hasData ? children : <EmptyChartState message={emptyMessage} />}
     </div>
   </div>
 );
 
 const ComplaintCharts = ({ complaints }) => {
-  if (!complaints) return null;
+  const rawStatus = complaints?.statusDistribution || [];
+  const rawCategory = complaints?.categoryDistribution || [];
+  const trendData = complaints?.monthlyTrend || [];
 
-  const statusData = assignStatusColors(complaints.statusDistribution, "status");
-  const categoryData = assignColors(complaints.categoryDistribution);
-  const trendData = complaints.monthlyTrend;
+  const statusData = assignStatusColors(rawStatus, "status");
+  const categoryData = assignColors(rawCategory);
 
   return (
     <div className="mb-8">
@@ -29,7 +42,7 @@ const ComplaintCharts = ({ complaints }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Status Pie Chart */}
-        <ChartContainer title="Status Distribution">
+        <ChartContainer title="Status Distribution" hasData={statusData.length > 0} emptyMessage="No complaints status logged yet">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -53,7 +66,7 @@ const ComplaintCharts = ({ complaints }) => {
         </ChartContainer>
 
         {/* Category Bar Chart */}
-        <ChartContainer title="Category Breakdown">
+        <ChartContainer title="Category Breakdown" hasData={categoryData.length > 0} emptyMessage="No complaint categories logged yet">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={categoryData} layout="vertical" margin={{ left: 40 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e7eb" />
@@ -70,7 +83,7 @@ const ComplaintCharts = ({ complaints }) => {
         </ChartContainer>
 
         {/* Monthly Trend Line Chart */}
-        <ChartContainer title="Monthly Trend">
+        <ChartContainer title="Monthly Trend" hasData={trendData.length > 0} emptyMessage="No monthly trend logged yet">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={trendData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />

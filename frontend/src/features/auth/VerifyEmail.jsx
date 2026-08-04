@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { CheckCircle, XCircle } from "lucide-react";
 import { Button } from "../../components/ui";
@@ -7,6 +7,7 @@ import api from "../../services/api";
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const calledRef = useRef(false);
   
   const [status, setStatus] = useState("verifying"); // verifying, success, error
   const [message, setMessage] = useState("");
@@ -17,6 +18,9 @@ export default function VerifyEmail() {
       setMessage("No verification token provided.");
       return;
     }
+
+    if (calledRef.current) return;
+    calledRef.current = true;
 
     const verifyToken = async () => {
       try {

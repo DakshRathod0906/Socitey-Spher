@@ -28,7 +28,9 @@ const runTest = async () => {
     const admin = await User.findOne({ societyId: society._id, role: "society_admin" });
     const resident = await User.findOne({ societyId: society._id, role: "resident" });
     const staff = await User.findOne({ societyId: society._id, role: "service_staff" });
-    const flat = await Flat.findOne({ societyId: society._id, _id: resident.flatId });
+    const flat = (resident && resident.flatId)
+      ? await Flat.findOne({ _id: resident.flatId })
+      : await Flat.findOne({ societyId: society._id });
 
     if (!admin || !resident || !staff || !flat) {
       console.log("Required users not found. Make sure to run previous seeds.");

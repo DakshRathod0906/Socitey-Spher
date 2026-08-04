@@ -1,30 +1,13 @@
-import * as VehicleService from "../services/parking/VehicleService.js";
 import * as ParkingSlotService from "../services/parking/ParkingSlotService.js";
-
-export const registerVehicle = async (req, res) => {
-  try {
-    const vehicle = await VehicleService.registerVehicle(req.body, req.societyId, req.user._id);
-    res.status(201).json(vehicle);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-export const listVehicles = async (req, res) => {
-  try {
-    const filters = {};
-    if (req.user.role === "resident") filters.ownerUserId = req.user._id;
-
-    const vehicles = await VehicleService.listVehicles(req.societyId, filters);
-    res.json(vehicles);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
 export const createSlot = async (req, res) => {
   try {
-    const slot = await ParkingSlotService.createSlot(req.body, req.societyId);
+    const { slotNumber, slotType } = req.body;
+    const slot = await ParkingSlotService.createSlot({
+      societyId: req.societyId,
+      slotNumber,
+      slotType,
+    });
     res.status(201).json(slot);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -33,10 +16,11 @@ export const createSlot = async (req, res) => {
 
 export const allocateSlot = async (req, res) => {
   try {
+    const { userId, vehicleId } = req.body;
     const slot = await ParkingSlotService.allocateSlot(
       req.params.id,
-      req.body.userId,
-      req.body.vehicleId,
+      userId,
+      vehicleId,
       req.societyId
     );
     res.json(slot);
@@ -53,6 +37,24 @@ export const updateOccupancy = async (req, res) => {
       req.societyId
     );
     res.json(slot);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const unassignSlot = async (req, res) => {
+  try {
+    const slot = await ParkingSlotService.unassignSlot(req.params.id, req.societyId);
+    res.json(slot);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const deleteSlot = async (req, res) => {
+  try {
+    const result = await ParkingSlotService.deleteSlot(req.params.id, req.societyId);
+    res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

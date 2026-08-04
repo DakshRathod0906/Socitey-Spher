@@ -11,7 +11,7 @@ const paymentSchema = new mongoose.Schema(
     amount: { type: Number, required: true },
     paymentMethod: {
       type: String,
-      enum: ["CASH", "CHEQUE", "UPI", "BANK_TRANSFER", "ONLINE"],
+      enum: ["CASH", "CHEQUE", "UPI", "BANK_TRANSFER", "ONLINE", "CREDIT_CARD", "DEBIT_CARD", "NET_BANKING"],
       required: true,
     },
     referenceNumber: { type: String, default: null }, // Transaction ID, Cheque Number

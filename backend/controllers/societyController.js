@@ -3,6 +3,7 @@ import Tower from "../models/Tower.js";
 import Flat from "../models/Flat.js";
 import User from "../models/User.js";
 import { generateCode } from "../utils/idGenerator.js";
+import { getOrCreateSettings } from "./settingController.js";
 
 // @desc   Create a new society (After admin registers)
 // @route  POST /api/societies
@@ -20,6 +21,9 @@ export const createSociety = async (req, res, next) => {
       throw new Error("User already belongs to a society or has a pending application");
     }
 
+    const platformSettings = await getOrCreateSettings();
+    const isAutoApprove = Boolean(platformSettings?.autoApproveSociety);
+
     const societyCode = generateCode("SOC");
 
     const society = await Society.create({
@@ -29,14 +33,21 @@ export const createSociety = async (req, res, next) => {
       city,
       state,
       pincode,
+      status: isAutoApprove ? "APPROVED" : "SUBMITTED",
     });
 
-    // Link the pending society to the current admin
-    req.user.pendingSocietyId = society._id;
+    if (isAutoApprove) {
+      req.user.societyId = society._id;
+      req.user.pendingSocietyId = undefined;
+    } else {
+      req.user.pendingSocietyId = society._id;
+    }
     await req.user.save();
 
     res.status(201).json({
-      message: "Society created and pending approval",
+      message: isAutoApprove
+        ? "Society created and automatically approved!"
+        : "Society created and pending approval",
       society
     });
   } catch (err) {

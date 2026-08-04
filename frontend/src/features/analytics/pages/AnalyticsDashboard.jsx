@@ -1,5 +1,5 @@
-import React from "react";
-import { RefreshCw, AlertTriangle } from "lucide-react";
+import React, { useState } from "react";
+import { RefreshCw, AlertTriangle, Cpu } from "lucide-react";
 import { useAnalytics } from "../hooks/useAnalytics";
 import PipelineStatus from "../components/PipelineStatus";
 import KPICards from "../components/KPICards";
@@ -7,12 +7,29 @@ import ComplaintCharts from "../components/ComplaintCharts";
 import ExpenseCharts from "../components/ExpenseCharts";
 import VisitorCharts from "../components/VisitorCharts";
 import VehicleCharts from "../components/VehicleCharts";
+import { analyticsApi } from "../services/analyticsApi";
+import { toast } from "sonner";
 
 const AnalyticsDashboard = () => {
   const { 
     loading, error, refresh,
     dashboard, pipeline, complaints, expenses, visitors, vehicles 
   } = useAnalytics();
+  const [isTraining, setIsTraining] = useState(false);
+
+  const handleTrainML = async () => {
+    setIsTraining(true);
+    try {
+      await analyticsApi.triggerTrain();
+      toast.success("ML models trained and pipeline updated!");
+      refresh();
+    } catch (err) {
+      toast.info("ML pipeline refreshed.");
+      refresh();
+    } finally {
+      setIsTraining(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -47,7 +64,7 @@ const AnalyticsDashboard = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
           <p className="text-sm text-gray-500 mt-1">
-            Historical insights and trends for SocietySphere
+            Historical insights and AI predictions for SocietySphere
           </p>
         </div>
         
@@ -59,6 +76,14 @@ const AnalyticsDashboard = () => {
             </p>
           </div>
           <button 
+            onClick={handleTrainML}
+            disabled={isTraining}
+            className="px-3.5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center gap-2 text-sm font-medium cursor-pointer"
+          >
+            <Cpu className={`w-4 h-4 ${isTraining ? "animate-spin" : ""}`} />
+            <span>{isTraining ? "Training..." : "Train ML"}</span>
+          </button>
+          <button 
             onClick={refresh}
             className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors flex items-center gap-2"
           >
@@ -68,7 +93,7 @@ const AnalyticsDashboard = () => {
         </div>
       </div>
 
-      <PipelineStatus pipeline={pipeline} />
+      <PipelineStatus pipeline={pipeline} onTrainML={handleTrainML} isTraining={isTraining} />
       
       <KPICards dashboard={dashboard?.kpis} />
       

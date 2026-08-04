@@ -15,11 +15,14 @@ const Login = lazy(() => import("./features/auth/Login"));
 const Register = lazy(() => import("./features/auth/Register"));
 const VerifyEmail = lazy(() => import("./features/auth/VerifyEmail"));
 const AcceptInvitation = lazy(() => import("./features/auth/AcceptInvitation"));
+const ForgotPassword = lazy(() => import("./features/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./features/auth/ResetPassword"));
 
 // Super Admin
 const SuperAdminDashboard = lazy(() => import("./features/super-admin/SuperAdminDashboard"));
 const SocietyDetails = lazy(() => import("./features/super-admin/SocietyDetails"));
 const SocietyAdmins = lazy(() => import("./features/super-admin/SocietyAdmins"));
+const SuperAdminSettings = lazy(() => import("./features/super-admin/SuperAdminSettings"));
 
 // Admin
 const AdminDashboard = lazy(() => import("./features/dashboard/AdminDashboard"));
@@ -78,6 +81,8 @@ function App() {
           <Route path="/register-society" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/accept-invite" element={<AcceptInvitation />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
 
         {/* Authenticated Routes with MainLayout App Shell */}
@@ -88,6 +93,7 @@ function App() {
             <Route path="societies" element={<ProtectedRoute allowedRoles={["super_admin"]}><SuperAdminDashboard /></ProtectedRoute>} />
             <Route path="societies/:id" element={<ProtectedRoute allowedRoles={["super_admin"]}><SocietyDetails /></ProtectedRoute>} />
             <Route path="admins" element={<ProtectedRoute allowedRoles={["super_admin"]}><SocietyAdmins /></ProtectedRoute>} />
+            <Route path="settings" element={<ProtectedRoute allowedRoles={["super_admin"]}><SuperAdminSettings /></ProtectedRoute>} />
           </Route>
 
           {/* Society Admin */}

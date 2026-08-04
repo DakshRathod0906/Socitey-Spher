@@ -25,6 +25,9 @@ export default function AdminAmenities() {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingAmenity, setEditingAmenity] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const categoriesList = ["All", "Gym", "Club House", "Swimming Pool", "Garden", "Community Hall", "Indoor Games", "Outdoor Sports", "Parking", "Other"];
 
   const handleCreateSubmit = (formData) => {
     createAmenity.mutate(formData, {
@@ -69,6 +72,11 @@ export default function AdminAmenities() {
     </div>
   );
 
+  const filteredAmenities = (amenities || []).filter(a => {
+    if (selectedCategory === "All") return true;
+    return a.category === selectedCategory;
+  });
+
   const renderCatalog = () => {
     if (isLoadingAmenities) return <div className="p-8 text-center text-slate-500">Loading catalog...</div>;
     if (isAmenitiesError) return (
@@ -76,30 +84,55 @@ export default function AdminAmenities() {
         Failed to load catalog. <button onClick={() => refetchAmenities()} className="underline">Retry</button>
       </div>
     );
-    if (!amenities.length) return renderCatalogEmptyState();
+    if (!amenities || !amenities.length) return renderCatalogEmptyState();
 
     return (
       <div className="space-y-4">
-        <div className="flex justify-end">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap gap-1.5">
+            {categoriesList.map(cat => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                  selectedCategory === cat
+                    ? "bg-primary text-white shadow-sm"
+                    : "bg-surface border border-border text-muted hover:text-text hover:border-slate-300"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center shrink-0"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Amenity
           </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {amenities.map(amenity => (
-            <AdminAmenityCard
-              key={amenity._id}
-              amenity={amenity}
-              onEditClick={(a) => setEditingAmenity(a)}
-              onToggleStatus={handleToggleStatus}
-              isToggling={toggleAmenityStatus.isPending && toggleAmenityStatus.variables?.id === amenity._id}
-            />
-          ))}
-        </div>
+
+        {filteredAmenities.length === 0 ? (
+          <div className="p-8 text-center bg-surface border border-border rounded-xl text-muted text-sm">
+            No amenities found under the "{selectedCategory}" category.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredAmenities.map(amenity => (
+              <AdminAmenityCard
+                key={amenity._id}
+                amenity={amenity}
+                onEditClick={(a) => setEditingAmenity(a)}
+                onToggleStatus={handleToggleStatus}
+                isToggling={toggleAmenityStatus.isPending && toggleAmenityStatus.variables?.id === amenity._id}
+              />
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -111,7 +144,7 @@ export default function AdminAmenities() {
         Failed to load bookings. <button onClick={() => refetchBookings()} className="underline">Retry</button>
       </div>
     );
-    if (!allBookings.length) return renderBookingsEmptyState();
+    if (!allBookings || !allBookings.length) return renderBookingsEmptyState();
 
     return (
       <div className="space-y-4 max-w-5xl">

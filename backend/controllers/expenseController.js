@@ -2,7 +2,7 @@ import * as ExpenseService from "../services/billing/ExpenseService.js";
 
 export const createExpense = async (req, res, next) => {
   try {
-    const { title, category, amount, expenseDate, vendorName, receiptUrl } = req.body;
+    const { title, category, amount, expenseDate, vendorName, receiptUrl, status } = req.body;
     
     const result = await ExpenseService.createExpense({
       societyId: req.societyId,
@@ -12,10 +12,21 @@ export const createExpense = async (req, res, next) => {
       expenseDate,
       vendorName,
       receiptUrl,
+      status,
       recordedBy: req.user._id
     });
 
     res.status(201).json({ success: true, data: result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateExpenseStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    const result = await ExpenseService.updateExpenseStatus(req.params.id, req.societyId, status);
+    res.json({ success: true, data: result });
   } catch (err) {
     next(err);
   }

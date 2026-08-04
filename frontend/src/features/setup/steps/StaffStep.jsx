@@ -12,7 +12,7 @@ const staffSchema = z.object({
   email: z.string().email("Valid email required"),
   password: z.string().min(8, "Minimum 8 characters"),
   phone: z.string().optional(),
-  employeeId: z.string().min(1, "Employee ID required"),
+  employeeId: z.string().optional(),
   role: z.enum(["security", "service_staff"]),
   shift: z.string().optional(),
   gateAssignment: z.string().optional(),
@@ -40,9 +40,9 @@ export default function StaffStep({ save, saving, previous }) {
 
   const fetchStaff = async () => {
     try {
-      // Pass role as array-like via URL params or just comma separated
       const res = await api.get("/users?role=security,service_staff");
-      setStaffList(res.data);
+      const list = res.data?.data || (Array.isArray(res.data) ? res.data : []);
+      setStaffList(list);
     } catch (error) {
       toast.error("Failed to load staff list");
     } finally {
@@ -54,15 +54,20 @@ export default function StaffStep({ save, saving, previous }) {
     fetchStaff();
   }, []);
 
+  const [apiError, setApiError] = useState("");
+
   const onAddStaff = async (data) => {
     setIsSubmitting(true);
+    setApiError("");
     try {
       await api.post("/users", data);
       toast.success("Staff member added");
       reset(); 
       fetchStaff();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add staff");
+      const msg = error.response?.data?.message || error.message || "Failed to add staff";
+      setApiError(msg);
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -94,6 +99,11 @@ export default function StaffStep({ save, saving, previous }) {
 
       <div className="bg-background border border-border rounded-lg p-4 mb-8">
         <h3 className="font-semibold text-text mb-4">Add Staff Member</h3>
+        {apiError && (
+          <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-md border border-red-200">
+            {apiError}
+          </div>
+        )}
         <form onSubmit={handleSubmit(onAddStaff)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
             <Input label="Name" placeholder="Full Name" error={errors.name?.message} {...register("name")} />

@@ -1,21 +1,26 @@
 import * as PaymentService from "../services/billing/PaymentService.js";
+import Bill from "../models/Bill.js";
 
 export const recordPayment = async (req, res, next) => {
   try {
     const { billId, amount, paymentMethod, referenceNumber, paymentDate, paymentProofUrl } = req.body;
     
-    // For admin recording resident payments, they might provide a specific resident ID. 
-    // If not provided, default to the currently logged in user (if resident).
-    const paidBy = req.body.paidBy || req.user._id;
+    const bill = await Bill.findById(billId);
+    if (!bill) {
+      res.status(404);
+      throw new Error("Bill not found");
+    }
+
+    const paidBy = req.body.paidBy || bill.residentId || req.user._id;
 
     const result = await PaymentService.recordPayment({
       societyId: req.societyId,
       billId,
       paidBy,
-      amount,
-      paymentMethod,
-      referenceNumber,
-      paymentDate,
+      amount: amount || bill.totalAmount,
+      paymentMethod: paymentMethod || "UPI",
+      referenceNumber: referenceNumber || `REF-${Date.now()}`,
+      paymentDate: paymentDate || new Date().toISOString(),
       paymentProofUrl,
       recordedBy: req.user._id
     });

@@ -11,11 +11,11 @@ from api.services.data_service import DataService
 router = APIRouter()
 
 def aggregate_distribution(df, column, key_name):
-    if df.empty or column not in df.columns:
-        return []
-    counts = df[column].value_counts().reset_index()
-    counts.columns = [key_name, "count"]
-    return counts.to_dict(orient="records")
+    if not df.empty and column in df.columns and len(df[column].dropna()) > 0:
+        counts = df[column].value_counts().reset_index()
+        counts.columns = [key_name, "count"]
+        return counts.to_dict(orient="records")
+    return []
 
 @router.get("/complaints/summary", response_model=ComplaintSummaryResponse)
 def get_complaints_summary():

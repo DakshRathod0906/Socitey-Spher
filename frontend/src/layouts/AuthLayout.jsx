@@ -1,13 +1,16 @@
 import { Outlet, Link } from "react-router-dom";
 import { Building2 } from "lucide-react";
+import { usePlatformSettings } from "../contexts/PlatformContext";
 
 export default function AuthLayout({ title, subtitle }) {
+  const { platformConfig } = usePlatformSettings();
+
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-surface">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link to="/" className="flex justify-center items-center gap-2 mb-6 text-primary hover:opacity-80 transition-opacity">
           <Building2 size={32} />
-          <span className="text-2xl font-bold">SocietySphere</span>
+          <span className="text-2xl font-bold">{platformConfig.appName}</span>
         </Link>
         <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-text">
           {title || "Welcome back"}

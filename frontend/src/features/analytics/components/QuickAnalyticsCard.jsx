@@ -55,21 +55,27 @@ const QuickAnalyticsCard = () => {
               <MessageSquare className="w-5 h-5 text-gray-500" />
               <span className="font-medium text-gray-700">Complaints</span>
             </div>
-            <span className="text-lg font-bold text-gray-900">{dashboard.kpis?.total_complaints || 0}</span>
+            <span className="text-lg font-bold text-gray-900">
+              {dashboard.kpis?.complaints?.total ?? dashboard.kpis?.total_complaints ?? 0}
+            </span>
           </div>
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center gap-3">
               <Users className="w-5 h-5 text-gray-500" />
               <span className="font-medium text-gray-700">Visitors</span>
             </div>
-            <span className="text-lg font-bold text-gray-900">{dashboard.kpis?.total_visitors || 0}</span>
+            <span className="text-lg font-bold text-gray-900">
+              {dashboard.kpis?.visitors?.total ?? dashboard.kpis?.total_visitors ?? 0}
+            </span>
           </div>
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center gap-3">
               <IndianRupee className="w-5 h-5 text-gray-500" />
               <span className="font-medium text-gray-700">Expenses</span>
             </div>
-            <span className="text-lg font-bold text-gray-900">₹{(dashboard.kpis?.total_expenses || 0).toLocaleString()}</span>
+            <span className="text-lg font-bold text-gray-900">
+              ₹{(dashboard.kpis?.billing?.total_amount ?? dashboard.kpis?.total_expenses ?? 0).toLocaleString()}
+            </span>
           </div>
         </div>
       ) : (

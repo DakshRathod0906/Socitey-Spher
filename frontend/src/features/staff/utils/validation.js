@@ -4,7 +4,7 @@ export const staffSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Valid email required"),
   phone: z.string().optional(),
-  employeeId: z.string().min(1, "Employee ID required"),
+  employeeId: z.string().optional(),
   role: z.enum(["security", "service_staff"]),
   
   // Password is only required on create. We will refine this in the modal.

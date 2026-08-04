@@ -45,6 +45,15 @@ export default function MyAmenities() {
     </div>
   );
 
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const categoriesList = ["All", "Gym", "Club House", "Swimming Pool", "Garden", "Community Hall", "Indoor Games", "Outdoor Sports", "Parking", "Other"];
+
+  const filteredAmenities = amenities.filter(a => {
+    if (selectedCategory === "All") return true;
+    return a.category === selectedCategory;
+  });
+
   const renderCatalog = () => {
     if (isLoadingAmenities) return <div className="p-8 text-center text-slate-500">Loading catalog...</div>;
     if (isAmenitiesError) return (
@@ -55,14 +64,40 @@ export default function MyAmenities() {
     if (!amenities.length) return renderCatalogEmptyState();
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {amenities.map(amenity => (
-          <AmenityCard
-            key={amenity._id}
-            amenity={amenity}
-            onBookClick={(a) => setBookingModalData(a)}
-          />
-        ))}
+      <div className="space-y-4">
+        {/* Category Filter Pills */}
+        <div className="flex flex-wrap gap-1.5 pb-2">
+          {categoriesList.map(cat => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                selectedCategory === cat
+                  ? "bg-primary text-white shadow-sm"
+                  : "bg-surface border border-border text-muted hover:text-text hover:border-slate-300"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {filteredAmenities.length === 0 ? (
+          <div className="p-8 text-center bg-surface border border-border rounded-xl text-muted text-sm">
+            No amenities available under the "{selectedCategory}" category.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredAmenities.map(amenity => (
+              <AmenityCard
+                key={amenity._id}
+                amenity={amenity}
+                onBookClick={(a) => setBookingModalData(a)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     );
   };

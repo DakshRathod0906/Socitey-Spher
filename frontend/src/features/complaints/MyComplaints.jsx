@@ -198,9 +198,11 @@ export default function MyComplaints() {
             <Select value={category} onChange={(e) => setCategory(e.target.value)}>
               <option value="PLUMBING">Plumbing</option>
               <option value="ELECTRICAL">Electrical</option>
-              <option value="CARPENTRY">Carpentry</option>
+              <option value="LIFT">Lift & Elevator</option>
               <option value="CLEANING">Housekeeping / Cleaning</option>
-              <option value="AMENITIES">Society Amenities</option>
+              <option value="SECURITY">Security</option>
+              <option value="PARKING">Parking</option>
+              <option value="GARDENING">Gardening</option>
               <option value="OTHER">Other</option>
             </Select>
           </div>

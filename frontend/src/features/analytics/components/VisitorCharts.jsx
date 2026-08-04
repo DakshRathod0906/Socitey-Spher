@@ -6,20 +6,32 @@ import {
 import { assignColors } from "../utils/chartTransformers";
 import { CHART_COLORS } from "../constants/chartColors";
 
-const ChartContainer = ({ title, children }) => (
+import { Users } from "lucide-react";
+
+const EmptyChartState = ({ message = "No visitor logs recorded yet" }) => (
+  <div className="flex flex-col items-center justify-center h-full text-gray-400">
+    <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mb-2">
+      <Users className="w-6 h-6 text-gray-300" />
+    </div>
+    <p className="text-sm font-medium text-gray-500">{message}</p>
+    <p className="text-xs text-gray-400 mt-1">0 records found in database</p>
+  </div>
+);
+
+const ChartContainer = ({ title, children, hasData = true, emptyMessage }) => (
   <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-96">
     <h3 className="text-lg font-semibold text-gray-800 mb-6">{title}</h3>
     <div className="flex-1 w-full h-full min-h-0">
-      {children}
+      {hasData ? children : <EmptyChartState message={emptyMessage} />}
     </div>
   </div>
 );
 
 const VisitorCharts = ({ visitors }) => {
-  if (!visitors) return null;
+  const rawType = visitors?.typeDistribution || [];
+  const trendData = visitors?.monthlyTrend || [];
 
-  const typeData = assignColors(visitors.typeDistribution);
-  const trendData = visitors.monthlyTrend;
+  const typeData = assignColors(rawType);
 
   return (
     <div className="mb-8">
@@ -27,7 +39,7 @@ const VisitorCharts = ({ visitors }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Type Breakdown */}
-        <ChartContainer title="Visitor Types">
+        <ChartContainer title="Visitor Types" hasData={typeData.length > 0} emptyMessage="No visitor type data recorded yet">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -50,7 +62,7 @@ const VisitorCharts = ({ visitors }) => {
         </ChartContainer>
 
         {/* Monthly Visits */}
-        <ChartContainer title="Monthly Visits">
+        <ChartContainer title="Monthly Visits" hasData={trendData.length > 0} emptyMessage="No monthly visitor trend recorded yet">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={trendData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />

@@ -113,3 +113,37 @@ const handleReopenApproved = async ({ complaint }) => {
 const handleComplaintClosed = async ({ complaint }) => {
   // Can notify admins or just log it
 };
+
+export const notifyResident = async (userId, title, message) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) return;
+    await Notification.create({
+      societyId: user.societyId,
+      userId: user._id,
+      title,
+      message,
+      type: "visitor"
+    });
+  } catch (err) {
+    console.error("[NotificationService] Failed to notify resident:", err);
+  }
+};
+
+export const notifySecurity = async (societyId, title, message) => {
+  try {
+    const securities = await User.find({ societyId, role: "security" });
+    const notifications = securities.map(sec => ({
+      societyId,
+      userId: sec._id,
+      title,
+      message,
+      type: "visitor"
+    }));
+    if (notifications.length > 0) {
+      await Notification.insertMany(notifications);
+    }
+  } catch (err) {
+    console.error("[NotificationService] Failed to notify security:", err);
+  }
+};

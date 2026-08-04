@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getNotices, createNotice, updateNotice, deleteNotice, archiveNotice } from "../api/noticeApi";
+import { getNotices, createNotice, updateNotice, deleteNotice, archiveNotice, unarchiveNotice } from "../api/noticeApi";
 import { toast } from "sonner";
 
 export const useNotices = (filters) => {
@@ -61,6 +61,20 @@ export const useArchiveNotice = () => {
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || "Failed to archive notice");
+    },
+  });
+};
+
+export const useUnarchiveNotice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: unarchiveNotice,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notices"] });
+      toast.success("Notice restored from archives");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to unarchive notice");
     },
   });
 };

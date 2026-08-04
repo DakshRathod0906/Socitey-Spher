@@ -59,7 +59,7 @@ export const createBooking = async (req, res) => {
   try {
     const booking = await BookingService.createBooking({
       ...req.body,
-      residentId: req.user.role === "resident" ? req.user._id : req.body.residentId,
+      residentId: req.body.residentId || req.user._id,
       societyId: req.societyId
     });
     res.status(201).json(booking);

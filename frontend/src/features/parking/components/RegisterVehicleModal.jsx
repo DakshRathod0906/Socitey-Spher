@@ -6,7 +6,7 @@ import { useRegisterVehicle } from "../hooks/useParking";
 
 const schema = z.object({
   licensePlate: z.string().min(1, "License plate is required").max(20, "License plate too long"),
-  type: z.enum(["4 Wheeler", "2 Wheeler", "EV (4W)", "EV (2W)"], { required_error: "Type is required" }),
+  type: z.enum(["FOUR_WHEELER", "TWO_WHEELER", "EV_FOUR_WHEELER", "EV_TWO_WHEELER", "BICYCLE", "OTHER"], { required_error: "Type is required" }),
   makeModel: z.string().optional(),
   color: z.string().optional()
 });
@@ -16,7 +16,7 @@ export default function RegisterVehicleModal({ isOpen, onClose }) {
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { type: "4 Wheeler" }
+    defaultValues: { type: "FOUR_WHEELER" }
   });
 
   const onSubmit = (data) => {
@@ -41,7 +41,7 @@ export default function RegisterVehicleModal({ isOpen, onClose }) {
         </>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
         <Input 
           label="License Plate *" 
           placeholder="e.g. MH12AB1234"
@@ -52,14 +52,15 @@ export default function RegisterVehicleModal({ isOpen, onClose }) {
         <Select 
           label="Vehicle Type *"
           error={errors.type?.message}
-          options={[
-            { label: "4 Wheeler (Car)", value: "4 Wheeler" },
-            { label: "2 Wheeler (Bike/Scooter)", value: "2 Wheeler" },
-            { label: "EV (4W)", value: "EV (4W)" },
-            { label: "EV (2W)", value: "EV (2W)" }
-          ]}
           {...register("type")}
-        />
+        >
+          <option value="FOUR_WHEELER">4 Wheeler (Car)</option>
+          <option value="TWO_WHEELER">2 Wheeler (Bike/Scooter)</option>
+          <option value="EV_FOUR_WHEELER">EV (4W)</option>
+          <option value="EV_TWO_WHEELER">EV (2W)</option>
+          <option value="BICYCLE">Bicycle</option>
+          <option value="OTHER">Other</option>
+        </Select>
 
         <div className="grid grid-cols-2 gap-4">
           <Input 

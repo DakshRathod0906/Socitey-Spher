@@ -55,13 +55,18 @@ app.get("/api/health", async (req, res) => {
   res.json({ status: "ok", service: "SocietySphere API", ml: mlStatus });
 });
 
+import settingRoutes from "./routes/settingRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
+
 app.use("/api/auth", authRoutes);
+app.use("/api/settings", settingRoutes);
 app.use("/api/setup", setupRoutes);
 app.use("/api/societies", societyRoutes);
 app.use("/api/residents", residentRoutes);
 app.use("/api/invitations", invitationRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/visitors", visitorRoutes);
+app.use("/api/visits", visitorRoutes);
 app.use("/api/complaints", complaintRoutes);
 app.use("/api/work-orders", workOrderRoutes);
 app.use("/api/users", userRoutes);
@@ -70,6 +75,7 @@ app.use("/api/parking", parkingRoutes);
 app.use("/api/notices", noticeRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/amenities", amenityRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

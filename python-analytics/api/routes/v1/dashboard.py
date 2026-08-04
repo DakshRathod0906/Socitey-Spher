@@ -8,14 +8,19 @@ from datetime import datetime
 router = APIRouter()
 
 @router.get("/dashboard", response_model=DashboardResponse)
+@router.get("/dashboard/", response_model=DashboardResponse)
 def get_dashboard():
     dashboard_data = DataService.get_dashboard_summary()
     manifest = DataService.get_manifest()
     
-    # We can fetch the file modification time for last_updated
-    summary_path = config.REPORT_DIR / "dashboard_summary.json"
-    last_updated_ts = os.path.getmtime(summary_path)
-    last_updated = datetime.fromtimestamp(last_updated_ts).isoformat() + "Z"
+    last_updated = datetime.now().isoformat() + "Z"
+    try:
+        summary_path = config.REPORT_DIR / "dashboard_summary.json"
+        if summary_path.exists():
+            last_updated_ts = os.path.getmtime(summary_path)
+            last_updated = datetime.fromtimestamp(last_updated_ts).isoformat() + "Z"
+    except Exception:
+        pass
     
     metadata = DashboardMetadata(generated_at=manifest.get("generatedAt", last_updated))
     

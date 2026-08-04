@@ -18,34 +18,35 @@ export const useAnalytics = () => {
       setLoading(true);
       setError(null);
 
-      const [
-        dashData,
-        pipeData,
-        compData,
-        expData,
-        visData,
-        vehData,
-        usrData
-      ] = await Promise.all([
-        analyticsApi.getDashboard(),
-        analyticsApi.getPipeline(),
-        analyticsApi.getComplaintsSummary(),
-        analyticsApi.getExpensesSummary(),
-        analyticsApi.getVisitorsSummary(),
-        analyticsApi.getVehiclesSummary(),
-        analyticsApi.getUsersSummary(),
-      ]);
-
-      setDashboard(dashData);
-      setPipeline(pipeData);
-      setComplaints(compData);
-      setExpenses(expData);
-      setVisitors(visData);
-      setVehicles(vehData);
-      setUsers(usrData);
-
+      const dashData = await analyticsApi.getDashboard();
+      
+      if (dashData) {
+        setDashboard(dashData);
+        setPipeline(dashData.pipeline);
+        setComplaints(dashData.complaints);
+        setExpenses(dashData.expenses);
+        setVisitors(dashData.visitors);
+        setVehicles(dashData.vehicles);
+        setUsers(dashData.users);
+      } else {
+        // Fallback individual requests if unified endpoint is unavailable
+        const [compData, expData, visData, vehData, usrData, pipeData] = await Promise.all([
+          analyticsApi.getComplaintsSummary(),
+          analyticsApi.getExpensesSummary(),
+          analyticsApi.getVisitorsSummary(),
+          analyticsApi.getVehiclesSummary(),
+          analyticsApi.getUsersSummary(),
+          analyticsApi.getPipeline(),
+        ]);
+        setComplaints(compData);
+        setExpenses(expData);
+        setVisitors(visData);
+        setVehicles(vehData);
+        setUsers(usrData);
+        setPipeline(pipeData);
+      }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Failed to fetch analytics");
+      setError(err.response?.data?.message || err.message || "Failed to fetch live analytics");
     } finally {
       setLoading(false);
     }

@@ -4,16 +4,34 @@ import * as vehicleService from "../services/resident/VehicleService.js";
 // @route  POST /api/vehicles
 export const addVehicle = async (req, res, next) => {
   try {
-    // If resident is adding for themselves, use req.user._id
-    // If admin is adding, they must provide ownerUserId in body
-    const ownerUserId = req.user.role === "resident" ? req.user._id : req.body.ownerUserId;
+    const ownerUserId = req.body.ownerUserId || req.user._id;
 
     if (!ownerUserId) {
       res.status(400);
       throw new Error("Owner user ID is required");
     }
 
-    const vehicle = await vehicleService.addVehicle(req.societyId, ownerUserId, req.body);
+    // Map user-friendly type string to backend enum if needed
+    let type = req.body.type || "FOUR_WHEELER";
+    const typeMap = {
+      "4 Wheeler": "FOUR_WHEELER",
+      "2 Wheeler": "TWO_WHEELER",
+      "EV (4W)": "EV_FOUR_WHEELER",
+      "EV (2W)": "EV_TWO_WHEELER",
+      "Bicycle": "BICYCLE",
+      "Other": "OTHER"
+    };
+
+    if (typeMap[type]) {
+      type = typeMap[type];
+    }
+
+    const payload = {
+      ...req.body,
+      type
+    };
+
+    const vehicle = await vehicleService.addVehicle(req.societyId, ownerUserId, payload);
     res.status(201).json({ message: "Vehicle added successfully", vehicle });
   } catch (err) {
     next(err);
@@ -25,9 +43,9 @@ export const addVehicle = async (req, res, next) => {
 // Or if resident fetches their own: GET /api/vehicles
 export const getVehicles = async (req, res, next) => {
   try {
-    const targetUserId = req.params.userId || req.user._id;
+    const targetUserId = req.params.userId || (req.user.role === "resident" ? req.user._id : null);
 
-    if (req.user.role === "resident" && targetUserId.toString() !== req.user._id.toString()) {
+    if (req.user.role === "resident" && targetUserId && targetUserId.toString() !== req.user._id.toString()) {
       res.status(403);
       throw new Error("You can only view your own vehicles");
     }
@@ -50,3 +68,6 @@ export const updateVehicleStatus = async (req, res, next) => {
     next(err);
   }
 };
+
+export const registerVehicle = addVehicle;
+export const listVehicles = getVehicles;

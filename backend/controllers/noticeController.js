@@ -10,12 +10,14 @@ export const createNotice = async (req, res, next) => {
       throw new Error("Title and content are required");
     }
 
+    const normalizedPriority = priority ? String(priority).toUpperCase() : "LOW";
+
     const notice = await Notice.create({
       societyId: req.societyId,
       title,
       content,
       isPinned: !!isPinned,
-      priority,
+      priority: normalizedPriority,
       category,
       audience,
       publishDate,
@@ -34,9 +36,8 @@ export const createNotice = async (req, res, next) => {
 // @route  GET /api/notices
 export const listNotices = async (req, res, next) => {
   try {
-    const includeArchived = req.query.archived === "true";
-    const filter = { societyId: req.societyId };
-    if (!includeArchived) filter.isArchived = false;
+    const isArchived = req.query.archived === "true";
+    const filter = { societyId: req.societyId, isArchived };
 
     const notices = await Notice.find(filter)
       .populate("createdBy", "name")
@@ -54,12 +55,17 @@ export const updateNotice = async (req, res, next) => {
   try {
     const { title, content, isPinned, priority, category, audience, publishDate, expiryDate, pinUntil } = req.body;
     
+    const updateData = { 
+      title, content, isPinned, category, audience, 
+      publishDate, expiryDate, pinUntil, updatedBy: req.user._id 
+    };
+    if (priority) {
+      updateData.priority = String(priority).toUpperCase();
+    }
+
     const notice = await Notice.findOneAndUpdate(
       { _id: req.params.id, societyId: req.societyId },
-      { 
-        title, content, isPinned, priority, category, audience, 
-        publishDate, expiryDate, pinUntil, updatedBy: req.user._id 
-      },
+      updateData,
       { new: true }
     );
     
@@ -95,6 +101,25 @@ export const archiveNotice = async (req, res, next) => {
     const notice = await Notice.findOneAndUpdate(
       { _id: req.params.id, societyId: req.societyId },
       { isArchived: true, updatedBy: req.user._id },
+      { new: true }
+    );
+    if (!notice) {
+      res.status(404);
+      throw new Error("Notice not found");
+    }
+    res.json(notice);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc   Unarchive a notice
+// @route  PUT /api/notices/:id/unarchive
+export const unarchiveNotice = async (req, res, next) => {
+  try {
+    const notice = await Notice.findOneAndUpdate(
+      { _id: req.params.id, societyId: req.societyId },
+      { isArchived: false, updatedBy: req.user._id },
       { new: true }
     );
     if (!notice) {

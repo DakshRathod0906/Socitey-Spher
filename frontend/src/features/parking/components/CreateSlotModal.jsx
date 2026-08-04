@@ -11,7 +11,7 @@ const schema = z.object({
 
 export default function CreateSlotModal({ isOpen, onClose }) {
   const { mutate: createSlot, isPending } = useCreateSlot();
-  
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { slotType: "resident" }
@@ -39,7 +39,7 @@ export default function CreateSlotModal({ isOpen, onClose }) {
         </>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
         <Input 
           label="Slot Number *" 
           placeholder="e.g. P1-01"
@@ -50,13 +50,12 @@ export default function CreateSlotModal({ isOpen, onClose }) {
         <Select 
           label="Slot Type *"
           error={errors.slotType?.message}
-          options={[
-            { label: "Resident", value: "resident" },
-            { label: "Visitor", value: "visitor" },
-            { label: "EV Charging", value: "ev" }
-          ]}
           {...register("slotType")}
-        />
+        >
+          <option value="resident">Resident</option>
+          <option value="visitor">Visitor</option>
+          <option value="ev">EV Charging</option>
+        </Select>
       </form>
     </Modal>
   );
